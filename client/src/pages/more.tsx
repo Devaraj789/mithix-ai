@@ -10,8 +10,21 @@ import {
   LogOut,
   User
 } from "lucide-react";
+import { useState, useEffect } from 'react'; // Import useState and useEffect
+import { useRouter } from 'next/router'; // Import useRouter for navigation
+
 
 export default function More() {
+  const router = useRouter(); // Initialize router
+
+  // Function to handle logout
+  const handleLogout = () => {
+    // Clear authentication state here (e.g., remove token from local storage or context)
+    // For demonstration, we'll just redirect. In a real app, you'd also clear auth tokens.
+    localStorage.removeItem('authToken'); // Example: Remove token from local storage
+    router.push('/login'); // Redirect to login page
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
@@ -110,6 +123,7 @@ export default function More() {
             variant="outline"
             className="w-fit mx-auto bg-slate-800/50 border-slate-600 hover:bg-slate-700/50 text-white flex items-center space-x-2"
             data-testid="button-logout"
+            onClick={handleLogout}
           >
             <LogOut className="w-4 h-4" />
             <span>Log Out</span>
