@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Download, Heart, Share2, MoreHorizontal, Eye, User, Copy, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { GeneratedImage } from "@shared/schema";
@@ -216,12 +216,6 @@ export default function Library() {
       {/* Image Actions Dialog */}
       <Dialog open={showImageActions} onOpenChange={setShowImageActions}>
         <DialogContent className="bg-slate-900 border-slate-700 max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Image Actions</DialogTitle>
-            <DialogDescription>
-              Choose an action to perform on this image.
-            </DialogDescription>
-          </DialogHeader>
           <div className="space-y-3">
             <Button
               variant="ghost"
@@ -270,14 +264,7 @@ export default function Library() {
       <Dialog open={!!selectedImage && !showImageActions} onOpenChange={() => setSelectedImage(null)}>
         <DialogContent className="bg-slate-900 border-slate-700 max-w-md">
           {selectedImage && (
-            <>
-              <DialogHeader>
-                <DialogTitle>Image Details</DialogTitle>
-                <DialogDescription>
-                  View details and options for this generated image.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
+            <div className="space-y-4">
               <img
                 src={selectedImage.imageUrl}
                 alt={`Generated: ${selectedImage.prompt}`}
@@ -344,7 +331,7 @@ export default function Library() {
                   Download
                 </Button>
               </div>
-            </>
+            </div>
           )}
         </DialogContent>
       </Dialog>
