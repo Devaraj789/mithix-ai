@@ -21,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Settings,
@@ -305,6 +306,9 @@ export default function Generate() {
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm">
               <DialogHeader>
                 <DialogTitle>Select Style</DialogTitle>
+                <DialogDescription>
+                  Choose a style to apply to your generated image.
+                </DialogDescription>
               </DialogHeader>
               <div className="grid grid-cols-2 gap-3">
                 {styleOptions.map((style) => (
@@ -336,6 +340,9 @@ export default function Generate() {
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm">
               <DialogHeader>
                 <DialogTitle>Select Preset</DialogTitle>
+                <DialogDescription>
+                  Choose a preset configuration for your image generation.
+                </DialogDescription>
               </DialogHeader>
               <div className="grid grid-cols-3 gap-3">
                 {presetOptions.map((preset) => (
@@ -366,6 +373,9 @@ export default function Generate() {
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Settings</DialogTitle>
+                <DialogDescription>
+                  Configure advanced settings for image generation.
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 {/* Contrast */}
