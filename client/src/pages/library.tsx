@@ -278,7 +278,7 @@ export default function Library() {
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
-                <img
+              <img
                 src={selectedImage.imageUrl}
                 alt={`Generated: ${selectedImage.prompt}`}
                 className="w-full rounded-lg"
@@ -344,7 +344,7 @@ export default function Library() {
                   Download
                 </Button>
               </div>
-            </div>
+            </>
           )}
         </DialogContent>
       </Dialog>
