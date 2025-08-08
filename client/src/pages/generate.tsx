@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, TrendingUp } from "lucide-react";
@@ -36,7 +37,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { GenerateImageRequest } from "@shared/schema";
-import { any } from "zod";
+
 const modelOptions = [
   {
     value: "black-forest-labs/FLUX.1-schnell",
@@ -56,10 +57,12 @@ const modelOptions = [
     online: true,
     credits: 3,
   },
-  { value: "stabilityai/stable-diffusion-xl-refiner-1.0", 
-   label: "SDXL Refiner 1.0", 
-   online: true, 
-   credits: 5 },
+  { 
+    value: "stabilityai/stable-diffusion-xl-refiner-1.0", 
+    label: "SDXL Refiner 1.0", 
+    online: true, 
+    credits: 5 
+  },
   {
     value: "CompVis/stable-diffusion-v1-4",
     label: "Stable Diffusion 1.4",
@@ -149,7 +152,6 @@ const presetOptions = [
   { value: "surreal", label: "Surreal" },
   { value: "ethereal", label: "Ethereal" },
   { value: "elegant", label: "Elegant" },
-
   { value: "gritty", label: "Gritty" },
 ];
 
@@ -160,6 +162,7 @@ const aspectRatios = [
   { value: "16:9", label: "16:9", width: 1024, height: 576 },
   { value: "9:16", label: "9:16", width: 576, height: 1024 },
 ];
+
 const imageSizes = [
   { value: "small", label: "Small", width: 896, height: 896 },
   { value: "medium", label: "Medium", width: 960, height: 960 },
@@ -167,9 +170,11 @@ const imageSizes = [
 ];
 
 const contrastLevels = ["Low", "Medium", "High"];
+
 export default function Generate() {
   const [location] = useLocation();
   const [prompt, setPrompt] = useState("");
+  
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlPrompt = urlParams.get("prompt");
@@ -177,9 +182,8 @@ export default function Generate() {
       setPrompt(decodeURIComponent(urlPrompt));
     }
   }, [location]);
-  const [selectedModel, setSelectedModel] = useState(
-    "black-forest-labs/FLUX.1-schnell",
-  );
+
+  const [selectedModel, setSelectedModel] = useState("black-forest-labs/FLUX.1-schnell");
   const [selectedStyle, setSelectedStyle] = useState("auto");
   const [selectedPreset, setSelectedPreset] = useState("auto");
   const [selectedContrast, setSelectedContrast] = useState("Medium");
@@ -196,92 +200,64 @@ export default function Generate() {
   const [showStyleReference, setShowStyleReference] = useState(false);
   const [showImageGuidance, setShowImageGuidance] = useState(false);
   const [hasStyleReference, setHasStyleReference] = useState(false);
-  const [styleReferenceImages, setStyleReferenceImages] = useState<string[]>(
-    [],
-  );
+  const [styleReferenceImages, setStyleReferenceImages] = useState<string[]>([]);
+  
   const { toast } = useToast();
-
   const queryClient = useQueryClient();
 
   const generateImageMutation = useMutation({
     mutationFn: async (data: GenerateImageRequest) => {
       const response = await apiRequest("POST", "/api/generate-image", {
         ...data,
-
         userId: "default-user",
       });
-
       return response.json();
     },
-
     onSuccess: () => {
       toast({
         title: "Image Generated!",
-
         description: "Your image has been created successfully.",
       });
-
       queryClient.invalidateQueries({
         queryKey: ["/api/user/default-user/images"],
       });
     },
-
     onError: (error: any) => {
       toast({
         title: "Generation Failed",
-
         description: error.message || "Failed to generate image",
-
         variant: "destructive",
       });
     },
   });
 
-  const selectedModelData = modelOptions.find(
-    (model) => model.value === selectedModel,
-  );
-
-  const selectedSizeData = imageSizes.find(
-    (size) => size.value === selectedSize,
-  );
+  const selectedModelData = modelOptions.find((model) => model.value === selectedModel);
+  const selectedSizeData = imageSizes.find((size) => size.value === selectedSize);
 
   const handleGenerate = () => {
     if (!prompt.trim()) {
       toast({
         title: "Missing Prompt",
-
         description: "Please enter a description for your image.",
-
         variant: "destructive",
       });
-
       return;
     }
 
     console.log("Generating with size:", selectedSizeData);
-    console.log(
-      "Generating with size:",
-      selectedSizeData?.width,
-      selectedSizeData?.height,
-    );
+    console.log("Generating with size:", selectedSizeData?.width, selectedSizeData?.height);
+    
     const width = selectedSizeData?.width || 576;
     const height = selectedSizeData?.height || 1024;
 
     generateImageMutation.mutate({
       prompt: prompt.trim(),
-
       model: selectedModel as any,
-
       stylePreset: selectedStyle.toLowerCase() as any,
-
       width,
-
       height,
-
       steps: 4,
-
       cfgScale: 1,
-
       numImages,
     });
   };
@@ -293,23 +269,18 @@ export default function Generate() {
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
-
       <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
         <div className="flex items-center">
           <h1 className="text-xl font-semibold mr-2">Image Gen</h1>
-
           <ChevronDown className="w-5 h-5 text-slate-400" />
         </div>
-
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <div className="w-6 h-6 bg-gradient-to-r from-orange-500 rounded flex items-center justify-center">
               <span className="text-xs font-bold">⚡</span>
             </div>
-
             <span className="text-white-400 font-medium">150</span>
           </div>
-
           <Button variant="ghost" size="icon" data-testid="button-menu">
             <MoreHorizontal className="w-5 h-5" />
           </Button>
@@ -318,10 +289,8 @@ export default function Generate() {
 
       <div className="p-4 space-y-4">
         {/* Style and Settings Selection */}
-
         <div className="flex space-x-3 mb-4">
           {/* Style Selection */}
-
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -330,16 +299,13 @@ export default function Generate() {
                 data-testid="button-styles"
               >
                 <Sparkles className="w-4 h-4" />
-
                 <span>Styles</span>
               </Button>
             </DialogTrigger>
-
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm">
               <DialogHeader>
                 <DialogTitle>Select Style</DialogTitle>
               </DialogHeader>
-
               <div className="grid grid-cols-2 gap-3">
                 {styleOptions.map((style) => (
                   <Button
@@ -356,7 +322,6 @@ export default function Generate() {
           </Dialog>
 
           {/* Preset Selection */}
-
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -365,16 +330,13 @@ export default function Generate() {
                 data-testid="button-preset"
               >
                 <Sparkles className="w-4 h-4" />
-
                 <span>Preset</span>
               </Button>
             </DialogTrigger>
-
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm">
               <DialogHeader>
                 <DialogTitle>Select Preset</DialogTitle>
               </DialogHeader>
-
               <div className="grid grid-cols-3 gap-3">
                 {presetOptions.map((preset) => (
                   <Button
@@ -391,7 +353,6 @@ export default function Generate() {
           </Dialog>
 
           {/* Settings Icon */}
-
           <Dialog open={showSettings} onOpenChange={setShowSettings}>
             <DialogTrigger asChild>
               <Button
@@ -399,35 +360,24 @@ export default function Generate() {
                 className="bg-slate-800/50 border-slate-600 rounded-xl p-4"
                 data-testid="button-settings"
               >
-                <Settings className="w- h-5" />
+                <Settings className="w-5 h-5" />
               </Button>
             </DialogTrigger>
-
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Settings</DialogTitle>
               </DialogHeader>
-
               <div className="space-y-4">
-                {/* All settings content moved here */}
-
                 {/* Contrast */}
-
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2">
                       <Settings className="w-5 h-5" />
-
                       <span className="font-medium">Contrast</span>
-
                       <ChevronDown className="w-4 h-4" />
                     </div>
-
-                    <span className="text-sm text-slate-400">
-                      {selectedContrast}
-                    </span>
+                    <span className="text-sm text-slate-400">{selectedContrast}</span>
                   </div>
-
                   <div className="space-y-2">
                     {contrastLevels.map((level) => (
                       <Button
@@ -443,7 +393,6 @@ export default function Generate() {
                 </div>
 
                 {/* Aspect Ratio */}
-
                 <div>
                   <div className="flex space-x-2 mb-4">
                     {aspectRatios.map((ratio) => (
@@ -451,17 +400,7 @@ export default function Generate() {
                         key={ratio.value}
                         variant="outline"
                         className={`flex-1 ${selectedAspectRatio === ratio.value ? "bg-orange-600/20 border-orange-600" : "bg-slate-800/50 border-slate-600"}`}
-                        onClick={() => {
-                          if (ratio.value === "more") {
-                            {
-                              /* Navigate to dimensions page */
-                            }
-
-                            window.location.href = "/dimensions";
-                          } else {
-                            setSelectedAspectRatio(ratio.value);
-                          }
-                        }}
+                        onClick={() => setSelectedAspectRatio(ratio.value)}
                       >
                         {ratio.label}
                       </Button>
@@ -469,17 +408,15 @@ export default function Generate() {
                   </div>
 
                   {/* Image Sizes */}
-
                   <div className="flex space-x-2 mb-4">
                     {imageSizes.map((size) => (
                       <Button
                         key={size.value}
                         variant="outline"
-                        className={`flex-1 flex flex-col ${selectedSize === size.value ? "orange-600/20 border-orange-600" : "bg-slate-800/50 border-slate-600"}`}
+                        className={`flex-1 flex flex-col ${selectedSize === size.value ? "bg-orange-600/20 border-orange-600" : "bg-slate-800/50 border-slate-600"}`}
                         onClick={() => setSelectedSize(size.value)}
                       >
                         <span className="font-medium">{size.label}</span>
-
                         <span className="text-xs text-slate-400">
                           {size.width} × {size.height}
                         </span>
@@ -489,16 +426,13 @@ export default function Generate() {
                 </div>
 
                 {/* Number of Images */}
-
                 <div>
                   <div className="flex items-center space-x-2 mb-3">
                     <span className="font-medium">Number of Images</span>
-
                     <Button variant="ghost" size="icon" className="w-4 h-4">
                       <span className="text-xs">?</span>
                     </Button>
                   </div>
-
                   <div className="flex space-x-2">
                     {[1, 2, 3, 4].map((num) => (
                       <Button
@@ -508,7 +442,6 @@ export default function Generate() {
                         onClick={() => setNumImages(num)}
                       >
                         {num}
-
                         <div className="w-4 h-4 ml-1 bg-gradient-to-r from-orange-500 to-brown-500 rounded flex items-center justify-center">
                           <span className="text-xs">⚡</span>
                         </div>
@@ -518,21 +451,17 @@ export default function Generate() {
                 </div>
 
                 {/* Private Mode */}
-
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <span className="font-medium">Private Mode</span>
-
                     <Button variant="ghost" size="icon" className="w-4 h-4">
                       <span className="text-xs">?</span>
                     </Button>
                   </div>
-
                   <div className="flex items-center space-x-2">
                     <div className="w-6 h-6 bg-gradient-to-r from-orange-500 rounded flex items-center justify-center">
                       <span className="text-xs">⚡</span>
                     </div>
-
                     <Switch
                       checked={privateMode}
                       onCheckedChange={setPrivateMode}
@@ -541,39 +470,30 @@ export default function Generate() {
                     />
                   </div>
                 </div>
-
                 <div className="text-xs text-slate-400 -mt-2">
                   Available for paid users only
                 </div>
 
                 {/* Advanced Settings */}
-
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="font-medium">Advanced Settings</span>
                   </div>
 
                   {/* Model Selection */}
-
                   <div className="mb-4">
                     <div className="flex items-center space-x-2 mb-2">
                       <span className="text-sm font-medium">Models</span>
                     </div>
-
-                    <Select
-                      value={selectedModel}
-                      onValueChange={setSelectedModel}
-                    >
+                    <Select value={selectedModel} onValueChange={setSelectedModel}>
                       <SelectTrigger className="bg-slate-800/50 border-slate-600">
                         <div className="flex items-center justify-between w-full">
                           <SelectValue />
-
                           {selectedModelData && (
                             <div className="flex items-center space-x-2">
                               <div
                                 className={`w-2 h-2 rounded-full ${selectedModelData.online ? "bg-green-400" : "bg-red-400"}`}
                               ></div>
-
                               <span className="text-xs text-slate-400">
                                 {selectedModelData.credits} credits
                               </span>
@@ -581,24 +501,20 @@ export default function Generate() {
                           )}
                         </div>
                       </SelectTrigger>
-
                       <SelectContent className="bg-slate-800 border-slate-600">
                         {modelOptions.map((model) => (
                           <SelectItem key={model.value} value={model.value}>
                             <div className="flex items-center justify-between w-full">
                               <span>{model.label}</span>
-
                               <div className="flex items-center space-x-2 ml-4">
                                 <div
                                   className={`w-2 h-2 rounded-full ${model.online ? "bg-green-400" : "bg-red-400"}`}
                                 ></div>
-
                                 <span
                                   className={`text-xs ${model.online ? "text-green-400" : "text-red-400"}`}
                                 >
                                   {model.online ? "Online" : "Offline"}
                                 </span>
-
                                 <span className="text-xs text-slate-400">
                                   {model.credits} credits
                                 </span>
@@ -611,24 +527,16 @@ export default function Generate() {
                   </div>
 
                   {/* Toggle Options */}
-
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <Settings className="w-4 h-4" />
-
                         <span>PhotoReal</span>
-
                         <Button variant="ghost" size="icon" className="w-4 h-4">
                           <span className="text-xs">?</span>
                         </Button>
                       </div>
-
                       <div className="flex items-center space-x-2">
-                        <div className="">
-                          <span className="text-xs"></span>
-                        </div>
-
                         <Switch
                           checked={photoReal}
                           onCheckedChange={setPhotoReal}
@@ -639,12 +547,10 @@ export default function Generate() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <span>Negative Prompt</span>
-
                         <Button variant="ghost" size="icon" className="w-4 h-4">
                           <span className="text-xs">?</span>
                         </Button>
                       </div>
-
                       <Switch
                         checked={negativePrompt}
                         onCheckedChange={setNegativePrompt}
@@ -654,16 +560,13 @@ export default function Generate() {
                 </div>
 
                 {/* Generate Button */}
-
                 <div className="pt-4 border-t border-slate-700">
-                  <div className="flex items-center justify- space-x-2 text-sm text-slate-400 mb-4">
+                  <div className="flex items-center justify-center space-x-2 text-sm text-slate-400 mb-4">
                     <div className="w-5 h-5 bg-gradient-to-r from-orange-500 to-brown-500 rounded flex items-center justify-center">
                       <span className="text-xs">⚡</span>
                     </div>
-
                     <span>15 to Generate</span>
                   </div>
-
                   <Button className="w-full bg-slate-800/50 border border-slate-600 text-white hover:bg-slate-700/50">
                     Reset to defaults
                   </Button>
@@ -674,7 +577,6 @@ export default function Generate() {
         </div>
 
         {/* Prompt Input */}
-
         <div className="space-y-3">
           <Textarea
             placeholder="Describe your image... or Enter your prompts..."
@@ -685,15 +587,12 @@ export default function Generate() {
           />
 
           {/* Below prompt controls */}
-
           <div className="flex items-center justify-end">
             <div className="flex items-center space-x-2 text-sm text-slate-400">
               <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-brown-500 rounded flex items-center justify-center">
                 <span className="text-xs">⚡</span>
               </div>
-
               <span>15</span>
-
               <Button
                 size="sm"
                 className="bg-gradient-to-r from-orange-500 to-brown-500 hover:from-purple-600 hover:to-pink-600 rounded-lg px-6"
@@ -718,9 +617,9 @@ export default function Generate() {
                   key={index}
                   className="bg-gradient-to-br from-red-600/20 to-black-600/20 border-black-500/30 hover:border-red-500/50 transition-colors"
                 >
-                  <CardContent className="p-0.25">
+                  <CardContent className="p-3">
                     <p className="text-sm text-slate-300">{prompt}</p>
-                    <div className="flex items-center justify-between mt-0.25">
+                    <div className="flex items-center justify-between mt-2">
                       <span className="text-xs text-slate-500">
                         #{index + 1} trending
                       </span>

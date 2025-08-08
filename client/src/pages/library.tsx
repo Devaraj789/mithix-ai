@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Download, Heart, Share2, MoreHorizontal, Eye, User, Copy, Trash2 } from "lucide-react";
@@ -261,9 +262,9 @@ export default function Library() {
 
       {/* Image Detail Dialog */}
       <Dialog open={!!selectedImage && !showImageActions} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="bg-slate-00 border-slate-700 max-w-md">
+        <DialogContent className="bg-slate-900 border-slate-700 max-w-md">
           {selectedImage && (
-            <div className="space-y-">
+            <div className="space-y-4">
               <img
                 src={selectedImage.imageUrl}
                 alt={`Generated: ${selectedImage.prompt}`}
@@ -283,22 +284,22 @@ export default function Library() {
                 <div>
                   <span className="text-slate-400">Style:</span>
                   <p className="font-medium">{selectedImage.stylePreset || 'Auto'}</p>
+                </div>
+                {selectedImage.width && selectedImage.height && selectedImage.steps ? (
+                  <>
+                    <div>
+                      <span className="text-slate-400">Size:</span>
+                      <p className="font-medium">
+                        {selectedImage.width} × {selectedImage.height}
+                      </p>
                     </div>
-                      {selectedImage.width && selectedImage.height && selectedImage.steps ? (
-                        <>
-                          <div>
-                            <span className="text-slate-400">Size:</span>
-                            <p className="font-medium">
-                              {selectedImage.width} × {selectedImage.height}
-                            </p>
-                          </div>
-                          <div>
-                            <span className="text-slate-400">Steps:</span>
-                            <p className="font-medium">{selectedImage.steps}</p>
-                          </div>
-                        </>
-                      ) : null}
-                  </div>
+                    <div>
+                      <span className="text-slate-400">Steps:</span>
+                      <p className="font-medium">{selectedImage.steps}</p>
+                    </div>
+                  </>
+                ) : null}
+              </div>
               <div className="flex space-x-3">
                 <Button
                   variant="outline"

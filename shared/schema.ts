@@ -1,3 +1,4 @@
+
 import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, integer, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
@@ -18,6 +19,9 @@ export const generatedImages = pgTable("generated_images", {
   model: text("model").notNull(),
   stylePreset: text("style_preset"),
   imageUrl: text("image_url").notNull(),
+  width: integer("width"),
+  height: integer("height"),
+  steps: integer("steps"),
   settings: jsonb("settings"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -31,24 +35,32 @@ export const insertGeneratedImageSchema = createInsertSchema(generatedImages).om
   id: true,
   createdAt: true,
 });
-// In shared/schema.ts
-// Add 'stabilityai/stable-diffusion-2-1' to the model enum
-  export const generateImageRequestSchema = z.object({
-    prompt: z.string().min(1, "Prompt is required").max(1000, "Prompt too long"),
-    model: z.enum([
-      "black-forest-labs/FLUX.1-schnell",
-      "stabilityai/stable-diffusion-xl-base-1.0",
-      "stabilityai/stable-diffusion-xl-refiner-1.0",
-      "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
-      "ByteDance/SDXL-Lightning",
-      "ByteDance/AnimateDiff-Lightning",
-      "xinsir/controlnet-union-sdxl-1.0",
-      "darkstorm2150/Protogen_x3.4_Official_Release",
-      "John6666/limitless-vision-xl-v30-sdxl",
-      "openart-custom/AlbedoBase",
-      "stabilityai/stable-diffusion-2-1" // Added model
-    ]),
-  stylePreset: z.enum(["auto", "dynamic", "photorealistic", "artistic", "anime", "scifi"]).optional(),
+
+export const generateImageRequestSchema = z.object({
+  prompt: z.string().min(1, "Prompt is required").max(1000, "Prompt too long"),
+  model: z.enum([
+    "black-forest-labs/FLUX.1-schnell",
+    "stabilityai/stable-diffusion-xl-base-1.0",
+    "runwayml/stable-diffusion-v1-5",
+    "stabilityai/stable-diffusion-xl-refiner-1.0",
+    "CompVis/stable-diffusion-v1-4",
+    "stabilityai/stable-diffusion-2-1",
+    "stabilityai/sdxl-turbo",
+    "ByteDance/SDXL-Lightning",
+    "prompthero/openjourney-v4",
+    "wavymulder/Analog-Diffusion",
+    "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
+    "ByteDance/AnimateDiff-Lightning",
+    "xinsir/controlnet-union-sdxl-1.0",
+    "darkstorm2150/Protogen_x3.4_Official_Release",
+    "John6666/limitless-vision-xl-v30-sdxl",
+    "openart-custom/AlbedoBase"
+  ]),
+  stylePreset: z.enum([
+    "auto", "dynamic", "photorealistic", "artistic", "anime", "sci-fi", 
+    "fantasy", "horror", "comic", "retro", "minmalist", "modern", 
+    "vintage", "futuristic"
+  ]).optional(),
   width: z.number().min(256).max(2048).default(512),
   height: z.number().min(256).max(2048).default(512),
   steps: z.number().min(1).max(50).default(4),
