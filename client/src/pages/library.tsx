@@ -261,9 +261,9 @@ export default function Library() {
 
       {/* Image Detail Dialog */}
       <Dialog open={!!selectedImage && !showImageActions} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="bg-slate-900 border-slate-700 max-w-md">
+        <DialogContent className="bg-slate-00 border-slate-700 max-w-md">
           {selectedImage && (
-            <div className="space-y-4">
+            <div className="space-y-">
               <img
                 src={selectedImage.imageUrl}
                 alt={`Generated: ${selectedImage.prompt}`}
@@ -283,22 +283,22 @@ export default function Library() {
                 <div>
                   <span className="text-slate-400">Style:</span>
                   <p className="font-medium">{selectedImage.stylePreset || 'Auto'}</p>
-                </div>
-                {selectedImage.settings && (
-                  <>
-                    <div>
-                      <span className="text-slate-400">Size:</span>
-                      <p className="font-medium">
-                        {(selectedImage.settings as any).width} × {(selectedImage.settings as any).height}
-                      </p>
                     </div>
-                    <div>
-                      <span className="text-slate-400">Steps:</span>
-                      <p className="font-medium">{(selectedImage.settings as any).steps}</p>
-                    </div>
-                  </>
-                )}
-              </div>
+                      {selectedImage.width && selectedImage.height && selectedImage.steps ? (
+                        <>
+                          <div>
+                            <span className="text-slate-400">Size:</span>
+                            <p className="font-medium">
+                              {selectedImage.width} × {selectedImage.height}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-slate-400">Steps:</span>
+                            <p className="font-medium">{selectedImage.steps}</p>
+                          </div>
+                        </>
+                      ) : null}
+                  </div>
               <div className="flex space-x-3">
                 <Button
                   variant="outline"

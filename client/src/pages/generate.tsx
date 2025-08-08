@@ -56,6 +56,10 @@ const modelOptions = [
     online: true,
     credits: 3,
   },
+  { value: "stabilityai/stable-diffusion-xl-refiner-1.0", 
+   label: "SDXL Refiner 1.0", 
+   online: true, 
+   credits: 5 },
   {
     value: "CompVis/stable-diffusion-v1-4",
     label: "Stable Diffusion 1.4",
@@ -109,73 +113,41 @@ const trendingPrompts = [
 
 const styleOptions = [
   { value: "auto", label: "Auto" },
-
   { value: "dynamic", label: "Dynamic" },
-
   { value: "photorealistic", label: "Photorealistic" },
-
   { value: "artistic", label: "Artistic" },
-
   { value: "anime", label: "Anime" },
-
   { value: "sci-fi", label: "Sci-Fi" },
-
   { value: "fantasy", label: "Fantasy" },
-
   { value: "horror", label: "Horror" },
-
   { value: "comic", label: "Comic" },
-
   { value: "retro", label: "Retro" },
-
   { value: "minmalist", label: "Minimalist" },
-
   { value: "modern", label: "Modern" },
-
   { value: "vintage", label: "Vintage" },
-
   { value: "futuristic", label: "Futuristic" },
 ];
 
 const presetOptions = [
   { value: "auto", label: "Auto" },
-
   { value: "creative", label: "Creative" },
-
   { value: "balanced", label: "Balanced" },
-
   { value: "realistic", label: "Realistic" },
-
   { value: "dreamlike", label: "Dreamlike" },
-
   { value: "artistic", label: "Artistic" },
-
   { value: "cinematic", label: "Cinematic" },
-
   { value: "fast", label: "Fast" },
-
   { value: "quality", label: "Quality" },
-
   { value: "detailed", label: "Detailed" },
-
   { value: "abstract", label: "Abstract" },
-
   { value: "whimsical", label: "Whimsical" },
-
   { value: "mysterious", label: "Mysterious" },
-
   { value: "Playful", label: "Playful" },
-
   { value: "serene", label: "Serene" },
-
   { value: "bold", label: "Bold" },
-
   { value: "subtle", label: "Subtle" },
-
   { value: "surreal", label: "Surreal" },
-
   { value: "ethereal", label: "Ethereal" },
-
   { value: "elegant", label: "Elegant" },
 
   { value: "gritty", label: "Gritty" },
@@ -403,7 +375,7 @@ export default function Generate() {
                 <DialogTitle>Select Preset</DialogTitle>
               </DialogHeader>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 {presetOptions.map((preset) => (
                   <Button
                     key={preset.value}
