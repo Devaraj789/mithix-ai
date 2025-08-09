@@ -3,6 +3,58 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generateImageRequestSchema } from "@shared/schema";
 import { z } from "zod";
+import sharp from "sharp";
+
+// Function to add watermark to image
+async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
+  try {
+    // Create watermark SVG
+    const watermarkSvg = `
+      <svg width="200" height="40" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:hsl(25, 95%, 53%);stop-opacity:0.8" />
+            <stop offset="100%" style="stop-color:hsl(35, 91%, 58%);stop-opacity:0.8" />
+          </linearGradient>
+        </defs>
+        <rect width="200" height="40" fill="rgba(0,0,0,0.3)" rx="8" ry="8"/>
+        <text x="100" y="28" font-family="Arial, sans-serif" font-size="16" font-weight="bold" 
+              text-anchor="middle" fill="url(#grad)">Mithix AI</text>
+      </svg>
+    `;
+
+    // Get image metadata
+    const image = sharp(imageBuffer);
+    const metadata = await image.metadata();
+    
+    if (!metadata.width || !metadata.height) {
+      return imageBuffer;
+    }
+
+    // Calculate watermark position (bottom right with padding)
+    const padding = 20;
+    const watermarkWidth = 200;
+    const watermarkHeight = 40;
+    
+    // Create watermark buffer
+    const watermarkBuffer = Buffer.from(watermarkSvg);
+    
+    // Composite the watermark onto the image
+    const watermarkedImage = await image
+      .composite([{
+        input: watermarkBuffer,
+        top: metadata.height - watermarkHeight - padding,
+        left: metadata.width - watermarkWidth - padding,
+      }])
+      .png()
+      .toBuffer();
+
+    return watermarkedImage;
+  } catch (error) {
+    console.error("Error adding watermark:", error);
+    return imageBuffer;
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get user credits
@@ -110,11 +162,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Get the image as blob and convert to base64
+      // Get the image as blob and add watermark
       const imageBlob = await hfResponse.blob();
       const arrayBuffer = await imageBlob.arrayBuffer();
-      const base64Image = Buffer.from(arrayBuffer).toString('base64');
-      const imageUrl = `data:image/jpeg;base64,${base64Image}`;
+      const originalBuffer = Buffer.from(arrayBuffer);
+      
+      // Add watermark to the image
+      const watermarkedBuffer = await addWatermark(originalBuffer);
+      const base64Image = watermarkedBuffer.toString('base64');
+      const imageUrl = `data:image/png;base64,${base64Image}`;
 
       // Save generated image to storage
       const generatedImage = await storage.createGeneratedImage({
