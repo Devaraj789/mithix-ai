@@ -12,10 +12,8 @@ import type { GenerateImageRequest } from "@shared/schema";
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+} from "@/components/ui/dialog";
 
 const modelOptions = [
   {

@@ -36,7 +36,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { GenerateImageRequest } from "@shared/schema";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
 
 // API-supported models only
 const modelOptions = [

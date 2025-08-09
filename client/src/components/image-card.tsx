@@ -7,10 +7,8 @@ import type { GeneratedImage } from "@shared/schema";
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface ImageCardProps {
   image: GeneratedImage;
@@ -86,9 +84,6 @@ export default function ImageCard({ image }: ImageCardProps) {
           />
         </DialogTrigger>
         <DialogContent className="max-w-4xl max-h-[90vh] p-0">
-          <VisuallyHidden>
-            <DialogTitle>Image Preview</DialogTitle>
-          </VisuallyHidden>
           <div className="relative">
             <img
               src={image.imageUrl}

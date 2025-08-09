@@ -4,13 +4,7 @@ import { Button } from "@/components/ui/button";
 import ImageCard from "./image-card";
 import LoadingState from "./loading-state";
 import type { GeneratedImage } from "@shared/schema";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
 
 
 export default function ImageGallery() {
