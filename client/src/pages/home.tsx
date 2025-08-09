@@ -26,11 +26,8 @@ export default function Home() {
       {/* Header */}
       <div className="p-4 border-b border-slate-700/50">
         <div className="flex items-center justify-between mb-4">
+          <MithixLogo size="md" showText={true} />
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">M</span>
-            </div>
-            <h1 className="text-xl font-semibold">Mithix.AI</h1>
           </div>
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
@@ -41,7 +38,7 @@ export default function Home() {
             </div>
             <Button
               size="sm"
-              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-purple-600 hover:to-pink-600 rounded-lg px-6"
+              className="bg-gradient-to-r from-orange-600 to-yellow-500 hover:from-purple-600 hover:to-pink-600 rounded-lg px-6"
             >
               Upgrade
             </Button>

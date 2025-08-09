@@ -741,7 +741,7 @@ export default function Generate() {
                 {/* Generate Button */}
                 <div className="pt-4 border-t border-slate-700">
                   <div className="flex items-center justify- space-x-2 text-sm text-slate-400 mb-4">
-                    <div className="w-5 h-5 bg-gradient-to-r from-orange-500 to-brown-500 rounded flex items-center justify-center">
+                    <div className="w-5 h-5 bg-gradient-to-r from-orange-500 to-yellow-500 rounded flex items-center justify-center">
                       <span className="text-xs">⚡</span>
                     </div>
                     <span>15 to generate</span>
@@ -774,7 +774,7 @@ export default function Generate() {
               <span>15</span>
               <Button
                 size="sm"
-                className="bg-gradient-to-r from-orange-500 to-brown-500 hover:from-purple-600 hover:to-pink-600 rounded-lg px-6"
+                className="bg-gradient-to-r from-orange-600 to-yellow-500 hover:from-purple-600 hover:to-pink-600 rounded-lg px-6"
                 onClick={handleGenerate}
                 disabled={generateImageMutation.isPending}
                 data-testid="button-generate"

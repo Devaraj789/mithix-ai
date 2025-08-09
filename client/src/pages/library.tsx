@@ -108,7 +108,7 @@ export default function Library() {
     <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-1">
           <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
             <span className="text-white font-bold">M</span>
           </div>
@@ -119,14 +119,14 @@ export default function Library() {
             <Share2 className="w-5 h-5" />
           </Button>
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded flex items-center justify-center">
+            <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-black-500 rounded flex items-center justify-center">
               <span className="text-xs font-bold">⚡</span>
             </div>
-            <span className="text-purple-400 font-medium">150</span>
+            <span className="text-white-400 font-medium">150</span>
           </div>
           <Button
             size="sm"
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-lg px-4"
+            className="bg-gradient-to-r from-orange-600 to-yellow-500 hover:from-purple-600 hover:to-pink-600 rounded-lg px-4"
           >
             Upgrade
           </Button>
