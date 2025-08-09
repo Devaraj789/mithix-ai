@@ -55,30 +55,7 @@ const modelOptions = [
     style: "Grand Scenes",
     color: "from-blue-600/20 to-teal-600/20"
   },
-  {
-    value: "ByteDance/SDXL-Lighting",
-    label: "SDXL Lightning",
-    online: true,
-    credits: 3,
-    style: "Fast Animation",
-    color: "from-yellow-600/20 to-orange-600/20"
-  },
-  {
-    value: "darkstorm2150/Protogen_x3.4_Official_Release",
-    label: "Protogen x3.4",
-    online: true,
-    credits: 4,
-    style: "Sci-Fi & Robots",
-    color: "from-green-600/20 to-emerald-600/20"
-  },
-  {
-    value: "xinsir/controller-union-sdxl-1.0",
-    label: "Controller Union SDXL",
-    online: true,
-    credits: 3,
-    style: "Game Design & Concept",
-    color: "from-red-600/20 to-pink-600/20"
-  },
+  
 ];
 
 // Model-specific trending prompts
@@ -90,33 +67,13 @@ const modelTrendingPrompts: Record<string, string[]> = {
     "Underwater palace with coral reefs and sea creatures, fantasy art",
     "Steampunk airship above Victorian London, intricate gears, golden hour"
   ],
-  "ByteDance/SDXL-Lighting": [
-    "Anime warrior with glowing sword, dynamic pose, speed lines, vibrant colors",
-    "Cyberpunk street food market at night, fast motion blur, neon signs",
-    "Superhero landing impact scene, shockwave effect, comic book style",
-    "Racing car on futuristic track, motion blur, high-speed action",
-    "Magical girl transformation sequence, sparkling particles, anime style"
-  ],
-  "darkstorm2150/Protogen_x3.4_Official_Release": [
-    "Sci-fi robot with detailed armor, glowing eyes, post-apocalyptic wasteland",
-    "Alien planet with strange plants and animals, hyperrealistic, 8k resolution",
-    "Cyborg samurai in neon-lit rain, cinematic, Blade Runner style",
-    "Futuristic war mech in ruined city, dramatic lighting, battle scene",
-    "Space opera scene with starships and nebula, epic scale, digital art"
-  ],
+  
   "black-forest-labs/FLUX.1-schnell": [
     "Abstract fluid art with vibrant colors, motion blur, dynamic composition",
     "Surreal landscape with floating islands and waterfalls, dreamlike",
     "Geometric shapes with glowing edges, optical illusion, modern art",
     "Melting clock in desert landscape, Salvador Dali style, surrealism",
     "Psychedelic mushroom forest with glowing plants, fantasy illustration"
-  ],
-  "xinsir/controller-union-sdxl-1.0": [
-    "Game character concept art, fantasy RPG, armor and weapon design",
-    "Isometric dungeon scene with traps and treasure, pixel art style",
-    "Cybernetically enhanced animal companions, character design sheet",
-    "UI interface for futuristic spacecraft controls, HUD elements",
-    "Level design for platformer game, colorful platforms and obstacles"
   ]
 };
 
