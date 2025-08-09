@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { FaApple, FaGoogle, FaMicrosoft } from "react-icons/fa";
 import { Mail, Eye, EyeOff } from "lucide-react";
