@@ -35,8 +35,7 @@ export default function Login() {
       <Card className="w-full max-w-md glass-card border-slate-700/50 relative z-10" data-testid="login-card">
         <CardContent className="p-8">
           <div className="flex items-center justify-center mb-8">
-            <MithixLogo className="w-10 h-10 mr-3" />
-            <h1 className="text-2xl font-bold text-white">Mithix.AI</h1>
+            <MithixLogo size="lg" showText={true} />
           </div>
 
           <div className="text-center mb-6">
