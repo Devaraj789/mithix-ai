@@ -1,0 +1,29 @@
+[vite] connecting...
+[vite] connected.
+Input is not defined
+at Login (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/src/pages/login.tsx:161:13)
+at renderWithHooks (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NXESFFTV.js?v=91d27738:11596:26)
+at mountIndeterminateComponent (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NXESFFTV.js?v=91d27738:14974:21)
+at beginWork (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NXESFFTV.js?v=91d27738:15962:22)
+at HTMLUnknownElement.callCallback2 (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NXESFFTV.js?v=91d27738:3680:22)
+at Object.invokeGuardedCallbackDev (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NXESFFTV.js?v=91d27738:3705:24)
+at invokeGuardedCallback (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NXESFFTV.js?v=91d27738:3739:39)
+at beginWork$1 (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NXESFFTV.js?v=91d27738:19818:15)
+at performUnitOfWork (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NXESFFTV.js?v=91d27738:19251:20)
+at workLoopSync (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NXESFFTV.js?v=91d27738:19190:13)
+Input is not defined
+The above error occurred in the <Login> component:
+
+    at Login (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/src/pages/login.tsx:27:27)
+    at Route (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=91d27738:322:16)
+    at Switch (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=91d27738:378:17)
+    at Router (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/src/App.tsx?v=FEb-UMI9Q8kgpKcdOV2L1:33:22)
+    at div
+    at Provider (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YGXCHL4G.js?v=91d27738:47:15)
+    at TooltipProvider (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=91d27738:65:5)
+    at QueryClientProvider (https://ec595870-3ae5-4eee-80a1-3dbf80b5b49b-00-1mdiudokxagou.pike.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=91d27738:2747:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Input is not defined
