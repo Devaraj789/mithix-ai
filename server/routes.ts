@@ -8,12 +8,88 @@ import sharp from "sharp";
 // Function to add watermark to image
 async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
   try {
-    // Create a simple text watermark
+    // Create an enhanced styled watermark with gradient and effects
     const watermarkSvg = `
-      <svg width="200" height="50" xmlns="http://www.w3.org/2000/svg">
-        <text x="10" y="30" font-family="Arial" font-size="16" fill="rgba(255,255,255,0.7)" stroke="rgba(0,0,0,0.3)" stroke-width="1">
-          Mithix AI
-        </text>
+      <svg width="250" height="80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Gradient for "Mithix" -->
+          <linearGradient id="mithixGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.9"/>
+            <stop offset="50%" stop-color="#a855f7" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#c084fc" stop-opacity="0.9"/>
+          </linearGradient>
+          
+          <!-- Gradient for "AI" -->
+          <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#0891b2" stop-opacity="0.9"/>
+          </linearGradient>
+          
+          <!-- Background gradient -->
+          <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="rgba(0,0,0,0.6)" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0.4)" stop-opacity="0.6"/>
+          </linearGradient>
+          
+          <!-- Glow filter -->
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge> 
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          
+          <!-- Drop shadow filter -->
+          <filter id="dropshadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.5)"/>
+          </filter>
+        </defs>
+        
+        <!-- Background rounded rectangle -->
+        <rect x="5" y="10" width="240" height="60" rx="15" ry="15" 
+              fill="url(#bgGradient)" 
+              stroke="rgba(255,255,255,0.2)" 
+              stroke-width="1" 
+              opacity="0.7"/>
+        
+        <!-- "Mithix" text with gradient and effects -->
+        <text x="20" y="40" 
+              font-family="Arial, sans-serif" 
+              font-size="22" 
+              font-weight="bold"
+              fill="url(#mithixGradient)" 
+              stroke="rgba(255,255,255,0.3)" 
+              stroke-width="0.5"
+              filter="url(#glow) url(#dropshadow)">Mithix</text>
+        
+        <!-- "AI" text with different gradient -->
+        <text x="120" y="40" 
+              font-family="Arial, sans-serif" 
+              font-size="22" 
+              font-weight="bold"
+              fill="url(#aiGradient)" 
+              stroke="rgba(255,255,255,0.3)" 
+              stroke-width="0.5"
+              filter="url(#glow) url(#dropshadow)">AI</text>
+        
+        <!-- Decorative elements -->
+        <circle cx="160" cy="35" r="3" fill="url(#aiGradient)" opacity="0.6">
+          <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="170" cy="35" r="2" fill="url(#mithixGradient)" opacity="0.7">
+          <animate attributeName="opacity" values="0.7;0.4;0.7" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="180" cy="35" r="2.5" fill="url(#aiGradient)" opacity="0.5">
+          <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Subtitle -->
+        <text x="20" y="55" 
+              font-family="Arial, sans-serif" 
+              font-size="10" 
+              fill="rgba(255,255,255,0.8)" 
+              opacity="0.7">Image Generator</text>
       </svg>
     `;
     
@@ -22,12 +98,12 @@ async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
     // Get image metadata to position watermark
     const { width, height } = await sharp(imageBuffer).metadata();
     
-    // Add watermark to bottom-right corner
+    // Add watermark to bottom-right corner with better positioning
     const watermarkedImage = await sharp(imageBuffer)
       .composite([{
         input: watermarkBuffer,
-        top: Math.max(0, (height || 1024) - 60),
-        left: Math.max(0, (width || 1024) - 210),
+        top: Math.max(0, (height || 1024) - 90),
+        left: Math.max(0, (width || 1024) - 260),
         blend: 'over'
       }])
       .jpeg({ quality: 90 })
