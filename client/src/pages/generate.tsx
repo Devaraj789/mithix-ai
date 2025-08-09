@@ -217,6 +217,10 @@ export default function Generate() {
   const [fixedSeed, setFixedSeed] = useState(false);
   const [photoReal, setPhotoReal] = useState(false);
   const [negativePrompt, setNegativePrompt] = useState(false);
+  const [negativePromptText, setNegativePromptText] = useState("");
+  const [guidanceScale, setGuidanceScale] = useState(7);
+  const [steps, setSteps] = useState(30);
+  const [seed, setSeed] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [showImageDimensions, setShowImageDimensions] = useState(false);
   const [showStyleReference, setShowStyleReference] = useState(false);
@@ -284,12 +288,14 @@ export default function Generate() {
 
     generateImageMutation.mutate({
       prompt: prompt.trim(),
+      negativePrompt: negativePrompt ? negativePromptText.trim() : undefined,
       model: selectedModel as any,
       stylePreset: selectedStyle.toLowerCase() as any,
       width,
       height,
-      steps: 4,
-      cfgScale: 1,
+      steps: steps,
+      cfgScale: guidanceScale,
+      seed: seed || undefined,
       numImages,
     });
   };
@@ -632,6 +638,87 @@ export default function Generate() {
                       <Switch
                         checked={negativePrompt}
                         onCheckedChange={setNegativePrompt}
+                      />
+                    </div>
+
+                    {/* Negative Prompt Textbox */}
+                    {negativePrompt && (
+                      <div className="mt-3">
+                        <Textarea
+                          placeholder="Describe what you don't want in your image..."
+                          value={negativePromptText}
+                          onChange={(e) => setNegativePromptText(e.target.value)}
+                          className="min-h-16 bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:border-orange-500 focus:ring-orange-500/20 resize-none rounded-lg"
+                        />
+                      </div>
+                    )}
+
+                    {/* Guidance Scale */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm font-medium">Guidance Scale</span>
+                          <Button variant="ghost" size="icon" className="w-4 h-4">
+                            <span className="text-xs">?</span>
+                          </Button>
+                        </div>
+                        <span className="text-sm text-slate-400">{guidanceScale}</span>
+                      </div>
+                      <Slider
+                        value={[guidanceScale]}
+                        onValueChange={(value) => setGuidanceScale(value[0])}
+                        min={1}
+                        max={20}
+                        step={0.5}
+                        className="w-full"
+                      />
+                    </div>
+
+                    {/* Steps */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm font-medium">Steps</span>
+                          <Button variant="ghost" size="icon" className="w-4 h-4">
+                            <span className="text-xs">?</span>
+                          </Button>
+                        </div>
+                        <span className="text-sm text-slate-400">{steps}</span>
+                      </div>
+                      <Slider
+                        value={[steps]}
+                        onValueChange={(value) => setSteps(value[0])}
+                        min={1}
+                        max={50}
+                        step={1}
+                        className="w-full"
+                      />
+                    </div>
+
+                    {/* Seed */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm font-medium">Seed</span>
+                          <Button variant="ghost" size="icon" className="w-4 h-4">
+                            <span className="text-xs">?</span>
+                          </Button>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSeed(Math.floor(Math.random() * 1000000))}
+                          className="text-xs text-orange-400 hover:text-orange-300"
+                        >
+                          Random
+                        </Button>
+                      </div>
+                      <input
+                        type="number"
+                        value={seed}
+                        onChange={(e) => setSeed(parseInt(e.target.value) || 0)}
+                        placeholder="Enter seed (0 for random)"
+                        className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm focus:border-orange-500 focus:ring-orange-500/20"
                       />
                     </div>
                   </div>
