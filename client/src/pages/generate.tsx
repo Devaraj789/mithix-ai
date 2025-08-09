@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, TrendingUp } from "lucide-react";
@@ -177,6 +176,7 @@ const aspectRatios = [
   { value: "1:1", label: "1:1", width: 960, height: 960 },
   { value: "16:9", label: "16:9", width: 1024, height: 576 },
   { value: "9:16", label: "9:16", width: 576, height: 1024 },
+  { value: "custom", label: "Custom", width: 1024, height: 1024 },
 ];
 
 const imageSizes = [
@@ -209,6 +209,8 @@ export default function Generate() {
   const [selectedContrast, setSelectedContrast] = useState("Medium");
   const [selectedAspectRatio, setSelectedAspectRatio] = useState("1:1");
   const [selectedSize, setSelectedSize] = useState("medium");
+  const [customWidth, setCustomWidth] = useState(1024);
+  const [customHeight, setCustomHeight] = useState(1024);
   const [numImages, setNumImages] = useState(1);
   const [privateMode, setPrivateMode] = useState(false);
   const [tiling, setTiling] = useState(false);
@@ -268,8 +270,17 @@ export default function Generate() {
       return;
     }
 
-    const width = selectedSizeData?.width || 576;
-    const height = selectedSizeData?.height || 1024;
+    const aspectRatio = aspectRatios.find(r => r.value === selectedAspectRatio);
+    const size = imageSizes.find(s => s.value === selectedSize);
+
+    let width, height;
+    if (selectedAspectRatio === "custom") {
+      width = customWidth;
+      height = customHeight;
+    } else {
+      width = aspectRatio?.width || size?.width || 1024;
+      height = aspectRatio?.height || size?.height || 1024;
+    }
 
     generateImageMutation.mutate({
       prompt: prompt.trim(),
@@ -473,17 +484,49 @@ export default function Generate() {
                         variant="outline"
                         className={`flex-1 ${selectedAspectRatio === ratio.value ? "bg-orange-600/20 border-orange-600" : "bg-slate-800/50 border-slate-600"}`}
                         onClick={() => {
-                          if (ratio.value === "more") {
-                            window.location.href = "/dimensions";
-                          } else {
-                            setSelectedAspectRatio(ratio.value);
-                          }
+                          setSelectedAspectRatio(ratio.value);
                         }}
                       >
                         {ratio.label}
                       </Button>
                     ))}
                   </div>
+
+                  {/* Custom Dimensions */}
+                  {selectedAspectRatio === "custom" && (
+                    <div className="mb-4 p-4 bg-slate-800/30 rounded-lg border border-slate-600">
+                      <h3 className="text-sm font-medium mb-3 text-slate-300">Custom Dimensions</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs text-slate-400 mb-1">Width</label>
+                          <input
+                            type="number"
+                            value={customWidth}
+                            onChange={(e) => setCustomWidth(Math.max(256, Math.min(2048, parseInt(e.target.value) || 1024)))}
+                            min="256"
+                            max="2048"
+                            step="64"
+                            className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-slate-400 mb-1">Height</label>
+                          <input
+                            type="number"
+                            value={customHeight}
+                            onChange={(e) => setCustomHeight(Math.max(256, Math.min(2048, parseInt(e.target.value) || 1024)))}
+                            min="256"
+                            max="2048"
+                            step="64"
+                            className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-slate-400">
+                        Ratio: {(customWidth / customHeight).toFixed(2)}:1 | {customWidth} × {customHeight} pixels
+                      </div>
+                    </div>
+                  )}
 
                   {/* Image Sizes */}
                   <div className="flex space-x-2 mb-4">
