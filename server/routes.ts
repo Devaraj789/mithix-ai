@@ -3,6 +3,43 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generateImageRequestSchema } from "@shared/schema";
 import { z } from "zod";
+import sharp from "sharp";
+
+// Function to add watermark to image
+async function addWatermark(imageBuffer: Buffer): Promise<Buffer> {
+  try {
+    // Create a simple text watermark
+    const watermarkSvg = `
+      <svg width="200" height="50" xmlns="http://www.w3.org/2000/svg">
+        <text x="10" y="30" font-family="Arial" font-size="16" fill="rgba(255,255,255,0.7)" stroke="rgba(0,0,0,0.3)" stroke-width="1">
+          Mithix AI
+        </text>
+      </svg>
+    `;
+    
+    const watermarkBuffer = Buffer.from(watermarkSvg);
+    
+    // Get image metadata to position watermark
+    const { width, height } = await sharp(imageBuffer).metadata();
+    
+    // Add watermark to bottom-right corner
+    const watermarkedImage = await sharp(imageBuffer)
+      .composite([{
+        input: watermarkBuffer,
+        top: Math.max(0, (height || 1024) - 60),
+        left: Math.max(0, (width || 1024) - 210),
+        blend: 'over'
+      }])
+      .jpeg({ quality: 90 })
+      .toBuffer();
+    
+    return watermarkedImage;
+  } catch (error) {
+    console.error("Watermark error:", error);
+    // Return original image if watermarking fails
+    return imageBuffer;
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get user credits
@@ -110,10 +147,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Get the image as blob and convert to base64
+      // Get the image as blob and convert to buffer
       const imageBlob = await hfResponse.blob();
       const arrayBuffer = await imageBlob.arrayBuffer();
-      const base64Image = Buffer.from(arrayBuffer).toString('base64');
+      const imageBuffer = Buffer.from(arrayBuffer);
+      
+      // Add watermark to the image
+      const watermarkedBuffer = await addWatermark(imageBuffer);
+      const base64Image = watermarkedBuffer.toString('base64');
       const imageUrl = `data:image/jpeg;base64,${base64Image}`;
 
       // Save generated image to storage
