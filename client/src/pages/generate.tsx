@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, TrendingUp } from "lucide-react";
@@ -37,14 +38,14 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { GenerateImageRequest } from "@shared/schema";
 
-// API-ஆல் ஆதரிக்கப்படும் மாடல்கள் மட்டும்
+// API-supported models only
 const modelOptions = [
   {
     value: "black-forest-labs/FLUX.1-schnell",
     label: "FLUX.1 Schnell",
     online: true,
     credits: 2,
-    style: "ஃப்ளூயிட் & அப்ஸ்ட்ராக்ட்",
+    style: "Fluid & Abstract",
     color: "from-purple-600/20 to-indigo-600/20"
   },
   {
@@ -52,7 +53,7 @@ const modelOptions = [
     label: "SDXL 1.0",
     online: true,
     credits: 5,
-    style: "பிரமாண்டமான காட்சிகள்",
+    style: "Grand Scenes",
     color: "from-blue-600/20 to-teal-600/20"
   },
   {
@@ -60,7 +61,7 @@ const modelOptions = [
     label: "SDXL Lightning",
     online: true,
     credits: 3,
-    style: "வேகமான அனிமேஷன்",
+    style: "Fast Animation",
     color: "from-yellow-600/20 to-orange-600/20"
   },
   {
@@ -68,7 +69,7 @@ const modelOptions = [
     label: "Protogen x3.4",
     online: true,
     credits: 4,
-    style: "சை-ஃபை & ரோபோட்கள்",
+    style: "Sci-Fi & Robots",
     color: "from-green-600/20 to-emerald-600/20"
   },
   {
@@ -76,57 +77,57 @@ const modelOptions = [
     label: "Controller Union SDXL",
     online: true,
     credits: 3,
-    style: "கேம் டிசைன் & கன்செப்ட்",
+    style: "Game Design & Concept",
     color: "from-red-600/20 to-pink-600/20"
   },
 ];
 
-// மாடல்-குறிப்பிட்ட டிரெண்டிங் ப்ராம்ப்ட்கள்
+// Model-specific trending prompts
 const modelTrendingPrompts: Record<string, string[]> = {
   "stabilityai/stable-diffusion-xl-base-1.0": [
-    "பனிமலைகளுக்கு மேலே பறக்கும் பிரமாண்டமான டிராகன், அல்ட்ரா HD, விரிவான செதில்கள், எபிக் லைட்டிங்",
-    "பறக்கும் கார்கள் மற்றும் நியான் விளக்குகளுடன் கூடிய பியூச்சரிஸ்டிக் நகரக் காட்சி, சைபர்பங்க் ஸ்டைல்",
-    "ஒடிக்கும் ஆடைகளுடன் கூடிய பண்டைய கிரேக்க தேவதை, ஃபோட்டோரியலிஸ்டிக், சினிமாடிக் லைட்டிங்",
-    "பவழப்பாறைகள் மற்றும் கடல் உயிரினங்களுடன் கூடிய நீருக்கடியில் அரண்மனை, ஃபேண்டசி ஆர்ட்",
-    "விக்டோரியன் லண்டனுக்கு மேலே ஸ்டீம்பங்க் ஏர்க்கப்பல், சிக்கலான கியர்கள், தங்க நேரம்"
+    "Giant dragon flying over snow mountains, ultra HD, detailed scales, epic lighting",
+    "Futuristic cityscape with flying cars and neon lights, cyberpunk style",
+    "Ancient Greek goddess with flowing robes, photorealistic, cinematic lighting",
+    "Underwater palace with coral reefs and sea creatures, fantasy art",
+    "Steampunk airship above Victorian London, intricate gears, golden hour"
   ],
   "ByteDance/SDXL-Lighting": [
-    "பளபளப்பான வாளுடன் கூடிய அனிமே வாரியர், டைனமிக் போஸ், ஸ்பீட் லைன்கள், தெளிவான நிறங்கள்",
-    "இரவில் சைபர்பங்க் தெரு உணவு சந்தை, வேகமான மோஷன் பிளர், நியான் அடையாளங்கள்",
-    "சூப்பர்ஹீரோ இறங்கும் தாக்கக் காட்சி, ஷாக்வேவ் விளைவு, காமிக் புத்தக ஸ்டைல்",
-    "பியூச்சரிஸ்டிக் பாதையில் பந்தய கார், மோஷன் பிளர், அதிவேக நடவடிக்கை",
-    "மந்திரப் பெண் மாற்றத் தொடர், பளபளப்பான துகள்கள், அனிமே ஸ்டைல்"
+    "Anime warrior with glowing sword, dynamic pose, speed lines, vibrant colors",
+    "Cyberpunk street food market at night, fast motion blur, neon signs",
+    "Superhero landing impact scene, shockwave effect, comic book style",
+    "Racing car on futuristic track, motion blur, high-speed action",
+    "Magical girl transformation sequence, sparkling particles, anime style"
   ],
   "darkstorm2150/Protogen_x3.4_Official_Release": [
-    "விரிவான கவசம், பளபளக்கும் கண்கள், பிந்தைய அபோகாலிப்டிக் பாழடைந்த பூமி ஆகியவற்றுடன் கூடிய சை-ஃபை ரோபோட்",
-    "விசித்திரமான தாவரங்கள் மற்றும் விலங்குகளுடன் கூடிய அன்னிய கிரகம், ஹைப்பரியலிஸ்டிக், 8k ரெசல்யூஷன்",
-    "நியான்-விளக்கும் மழையில் சைபோர்க் சாமுராய், சினிமாடிக், பிளேடு ரன்னர் ஸ்டைல்",
-    "பாழடைந்த நகரத்தில் பியூச்சரிஸ்டிக் போர் மெக், வியத்தகு ஒளி, போர்",
-    "நட்சத்திரக் கப்பல்கள் மற்றும் நெபுலாவுடன் கூடிய ஸ்பேஸ் ஓபரா காட்சி, எபிக் ஸ்கேல், டிஜிட்டல் ஆர்ட்"
+    "Sci-fi robot with detailed armor, glowing eyes, post-apocalyptic wasteland",
+    "Alien planet with strange plants and animals, hyperrealistic, 8k resolution",
+    "Cyborg samurai in neon-lit rain, cinematic, Blade Runner style",
+    "Futuristic war mech in ruined city, dramatic lighting, battle scene",
+    "Space opera scene with starships and nebula, epic scale, digital art"
   ],
   "black-forest-labs/FLUX.1-schnell": [
-    "தெளிவான நிறங்களுடன் கூடிய அப்ஸ்ட்ராக்ட் ஃப்ளூயிட் ஆர்ட், மோஷன் பிளர், டைனமிக் காம்போசிஷன்",
-    "மிதக்கும் தீவுகள் மற்றும் அருவிகளுடன் கூடிய சர்ரியல் இயற்கைக்காட்சி, கனவு போன்றது",
-    "பளபளக்கும் விளிம்புகளுடன் கூடிய ஜியோமெட்ரிக் வடிவங்கள், ஆப்டிகல் இல்லூஷன், நவீன கலை",
-    "பாலைவன இயற்கைக்காட்சியில் உருகும் கடிகாரம், சால்வடோர் டாலி ஸ்டைல், சர்ரியலிசம்",
-    "பளபளக்கும் தாவரங்களுடன் கூடிய சைக்கடெலிக் காளான் காடு, ஃபேண்டசி விளக்கம்"
+    "Abstract fluid art with vibrant colors, motion blur, dynamic composition",
+    "Surreal landscape with floating islands and waterfalls, dreamlike",
+    "Geometric shapes with glowing edges, optical illusion, modern art",
+    "Melting clock in desert landscape, Salvador Dali style, surrealism",
+    "Psychedelic mushroom forest with glowing plants, fantasy illustration"
   ],
   "xinsir/controller-union-sdxl-1.0": [
-    "கேம் கேரக்டர் கன்செப்ட் ஆர்ட், ஃபேண்டசி RPG, கவசம் மற்றும் ஆயுதங்களின் வடிவமைப்பு",
-    "பொறிகளும் புதையலும் கொண்ட ஐசோமெட்ரிக் டஞ்சன் காட்சி, பிக்சல் ஆர்ட் ஸ்டைல்",
-    "சைபர்நெட்டிகலி மேம்படுத்தப்பட்ட விலங்கு துணைகள், கேரக்டர் டிசைன் ஷீட்",
-    "பியூச்சரிஸ்டிக் ஸ்பேஸ்கிராஃப்ட் கன்ட்ரோல்களுக்கான UI இன்டர்ஃபேஸ், HUD எலிமெண்ட்ஸ்",
-    "பிளாட்ஃபார்மர் கேமிற்கான லெவல் டிசைன், வண்ணமயமான மேடைகள் மற்றும் தடைகள்"
+    "Game character concept art, fantasy RPG, armor and weapon design",
+    "Isometric dungeon scene with traps and treasure, pixel art style",
+    "Cybernetically enhanced animal companions, character design sheet",
+    "UI interface for futuristic spacecraft controls, HUD elements",
+    "Level design for platformer game, colorful platforms and obstacles"
   ]
 };
 
-// டிஃபால்ட் டிரெண்டிங் ப்ராம்ப்ட்கள்
+// Default trending prompts
 const defaultTrendingPrompts = [
-  "நியான் விளக்குகளுடன் இரவில் சைபர்பங்க் நகரக் காட்சி",
-  "பனிமலைகளுக்கு மேலே பறக்கும் பிரமாண்டமான டிராகன்",
-  "அன்னிய கிரகத்தை ஆராயும் விண்வெளி வீரர்",
-  "கைவிடப்பட்ட நகரத்தில் விண்டேஜ் கார்",
-  "பளபளக்கும் காளான்களுடன் மந்திர காடு"
+  "Cyberpunk cityscape at night with neon lights",
+  "Giant dragon flying over snow mountains",
+  "Astronaut exploring alien planet",
+  "Vintage car in abandoned city",
+  "Magical forest with glowing mushrooms"
 ];
 
 const styleOptions = [
@@ -198,7 +199,7 @@ export default function Generate() {
     }
   }, [location]);
 
-  // டிஃபால்ட் மாடலை ஆதரிக்கப்படுவதாக மாற்றுதல்
+  // Change default model to supported one
   const [selectedModel, setSelectedModel] = useState(
     "stabilityai/stable-diffusion-xl-base-1.0"
   );
@@ -224,11 +225,11 @@ export default function Generate() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // தற்போதைய மாடலுக்கான டிரெண்டிங் ப்ராம்ப்ட்கள்
+  // Trending prompts for current model
   const selectedModelData = modelOptions.find(model => model.value === selectedModel);
   const currentTrendingPrompts = modelTrendingPrompts[selectedModel] || defaultTrendingPrompts;
 
-  // ஜெனரேட் மியூடேஷன்
+  // Generate mutation
   const generateImageMutation = useMutation({
     mutationFn: async (data: GenerateImageRequest) => {
       const response = await apiRequest("POST", "/api/generate-image", {
@@ -239,8 +240,8 @@ export default function Generate() {
     },
     onSuccess: () => {
       toast({
-        title: "படம் உருவாக்கப்பட்டது!",
-        description: "உங்கள் படம் வெற்றிகரமாக உருவாக்கப்பட்டது.",
+        title: "Image Generated!",
+        description: "Your image has been created successfully.",
       });
       queryClient.invalidateQueries({
         queryKey: ["/api/user/default-user/images"],
@@ -248,8 +249,8 @@ export default function Generate() {
     },
     onError: (error: any) => {
       toast({
-        title: "உருவாக்கம் தோல்வியடைந்தது",
-        description: error.message || "படத்தை உருவாக்க முடியவில்லை",
+        title: "Generation Failed",
+        description: error.message || "Failed to generate image",
         variant: "destructive",
       });
     },
@@ -260,8 +261,8 @@ export default function Generate() {
   const handleGenerate = () => {
     if (!prompt.trim()) {
       toast({
-        title: "ப்ராம்ப்ட் காணவில்லை",
-        description: "உங்கள் படத்திற்கான விளக்கத்தை உள்ளிடவும்.",
+        title: "Prompt Required",
+        description: "Please enter a description for your image.",
         variant: "destructive",
       });
       return;
@@ -288,10 +289,10 @@ export default function Generate() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
-      {/* ஹெடர் */}
+      {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
         <div className="flex items-center">
-          <h1 className="text-xl font-semibold mr-2">AI பட உருவாக்கி</h1>
+          <h1 className="text-xl font-semibold mr-2">AI Image Generator</h1>
           <ChevronDown className="w-5 h-5 text-slate-400" />
         </div>
         <div className="flex items-center space-x-4">
@@ -308,9 +309,9 @@ export default function Generate() {
       </div>
 
       <div className="p-4 space-y-4">
-        {/* ஸ்டைல் மற்றும் செட்டிங்ஸ் */}
+        {/* Style and Settings */}
         <div className="flex space-x-3 mb-4">
-          {/* ஸ்டைல் தேர்வு */}
+          {/* Style Selection */}
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -319,12 +320,12 @@ export default function Generate() {
                 data-testid="button-styles"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>ஸ்டைல்கள்</span>
+                <span>Styles</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm">
               <DialogHeader>
-                <DialogTitle>ஸ்டைலைத் தேர்ந்தெடுக்கவும்</DialogTitle>
+                <DialogTitle>Select Style</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-2 gap-3">
                 {styleOptions.map((style) => (
@@ -341,7 +342,7 @@ export default function Generate() {
             </DialogContent>
           </Dialog>
 
-          {/* பிரீசெட் தேர்வு */}
+          {/* Preset Selection */}
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -350,12 +351,12 @@ export default function Generate() {
                 data-testid="button-preset"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>பிரீசெட்</span>
+                <span>Preset</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-slate-1000 border-slate-600 max-w-sm">
               <DialogHeader>
-                <DialogTitle>பிரீசெட்டைத் தேர்ந்தெடுக்கவும்</DialogTitle>
+                <DialogTitle>Select Preset</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-3 gap-3">
                 {presetOptions.map((preset) => (
@@ -372,7 +373,7 @@ export default function Generate() {
             </DialogContent>
           </Dialog>
 
-          {/* செட்டிங்ஸ் */}
+          {/* Settings */}
           <Dialog open={showSettings} onOpenChange={setShowSettings}>
             <DialogTrigger asChild>
               <Button
@@ -385,13 +386,13 @@ export default function Generate() {
             </DialogTrigger>
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm max-h-[80vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>செட்டிங்ஸ்</DialogTitle>
+                <DialogTitle>Settings</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
-                {/* மாடல் தேர்வு */}
+                {/* Model Selection */}
                 <div className="mb-4">
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-sm font-medium">மாடல்கள்</span>
+                    <span className="text-sm font-medium">Models</span>
                   </div>
                   <Select
                     value={selectedModel}
@@ -406,7 +407,7 @@ export default function Generate() {
                               className={`w-2 h-2 rounded-full ${selectedModelData.online ? "bg-green-400" : "bg-red-400"}`}
                             ></div>
                             <span className="text-xs text-slate-400">
-                              {selectedModelData.credits} கிரெடிட்ஸ்
+                              {selectedModelData.credits} credits
                             </span>
                           </div>
                         )}
@@ -424,10 +425,10 @@ export default function Generate() {
                               <span
                                 className={`text-xs ${model.online ? "text-green-400" : "text-red-400"}`}
                               >
-                                {model.online ? "ஆன்லைன்" : "ஆஃப்லைன்"}
+                                {model.online ? "Online" : "Offline"}
                               </span>
                               <span className="text-xs text-slate-400">
-                                {model.credits} கிரெடிட்ஸ்
+                                {model.credits} credits
                               </span>
                             </div>
                           </div>
@@ -437,12 +438,12 @@ export default function Generate() {
                   </Select>
                 </div>
 
-                {/* காண்ட்ராஸ்ட் */}
+                {/* Contrast */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2">
                       <Settings className="w-5 h-5" />
-                      <span className="font-medium">காண்ட்ராஸ்ட்</span>
+                      <span className="font-medium">Contrast</span>
                       <ChevronDown className="w-4 h-4" />
                     </div>
                     <span className="text-sm text-slate-400">
@@ -463,7 +464,7 @@ export default function Generate() {
                   </div>
                 </div>
 
-                {/* அஸ்பெக்ட் ரேஷியோ */}
+                {/* Aspect Ratio */}
                 <div>
                   <div className="flex space-x-2 mb-4">
                     {aspectRatios.map((ratio) => (
@@ -484,7 +485,7 @@ export default function Generate() {
                     ))}
                   </div>
 
-                  {/* பட அளவுகள் */}
+                  {/* Image Sizes */}
                   <div className="flex space-x-2 mb-4">
                     {imageSizes.map((size) => (
                       <Button
@@ -502,10 +503,10 @@ export default function Generate() {
                   </div>
                 </div>
 
-                {/* படங்களின் எண்ணிக்கை */}
+                {/* Number of Images */}
                 <div>
                   <div className="flex items-center space-x-2 mb-3">
-                    <span className="font-medium">படங்களின் எண்ணிக்கை</span>
+                    <span className="font-medium">Number of Images</span>
                     <Button variant="ghost" size="icon" className="w-4 h-4">
                       <span className="text-xs">?</span>
                     </Button>
@@ -527,10 +528,10 @@ export default function Generate() {
                   </div>
                 </div>
 
-                {/* பிரைவேட் மோட் */}
+                {/* Private Mode */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <span className="font-medium">பிரைவேட் மோட்</span>
+                    <span className="font-medium">Private Mode</span>
                     <Button variant="ghost" size="icon" className="w-4 h-4">
                       <span className="text-xs">?</span>
                     </Button>
@@ -548,21 +549,21 @@ export default function Generate() {
                   </div>
                 </div>
                 <div className="text-xs text-slate-400 -mt-2">
-                  பணம் செலுத்தும் பயனர்களுக்கு மட்டுமே கிடைக்கும்
+                  Available only for paid users
                 </div>
 
-                {/* மேம்பட்ட செட்டிங்ஸ் */}
+                {/* Advanced Settings */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="font-medium">மேம்பட்ட செட்டிங்ஸ்</span>
+                    <span className="font-medium">Advanced Settings</span>
                   </div>
 
-                  {/* டோகிள் ஆப்ஷன்ஸ் */}
+                  {/* Toggle Options */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <Settings className="w-4 h-4" />
-                        <span>ஃபோட்டோ ரியல்</span>
+                        <span>Photo Real</span>
                         <Button variant="ghost" size="icon" className="w-4 h-4">
                           <span className="text-xs">?</span>
                         </Button>
@@ -580,7 +581,7 @@ export default function Generate() {
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <span>நெகடிவ் ப்ராம்ப்ட்</span>
+                        <span>Negative Prompt</span>
                         <Button variant="ghost" size="icon" className="w-4 h-4">
                           <span className="text-xs">?</span>
                         </Button>
@@ -593,16 +594,16 @@ export default function Generate() {
                   </div>
                 </div>
 
-                {/* ஜெனரேட் பட்டன் */}
+                {/* Generate Button */}
                 <div className="pt-4 border-t border-slate-700">
                   <div className="flex items-center justify- space-x-2 text-sm text-slate-400 mb-4">
                     <div className="w-5 h-5 bg-gradient-to-r from-orange-500 to-brown-500 rounded flex items-center justify-center">
                       <span className="text-xs">⚡</span>
                     </div>
-                    <span>ஜெனரேட் செய்ய 15</span>
+                    <span>15 to generate</span>
                   </div>
                   <Button className="w-full bg-slate-800/50 border border-slate-600 text-white hover:bg-slate-700/50">
-                    டிஃபால்ட்களுக்கு மீட்டமைக்கவும்
+                    Reset to defaults
                   </Button>
                 </div>
               </div>
@@ -610,17 +611,17 @@ export default function Generate() {
           </Dialog>
         </div>
 
-        {/* ப்ராம்ப்ட் இன்புட் */}
+        {/* Prompt Input */}
         <div className="space-y-3">
           <Textarea
-            placeholder="உங்கள் படத்தை விவரிக்கவும்... அல்லது உங்கள் ப்ராம்ப்ட்களை உள்ளிடவும்..."
+            placeholder="Describe your image... or enter your prompts..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="min-h-20 bg-slate-800/50 border-slate-600 text-white placeholder-slate-500 focus:border-primary focus:ring-primary/20 resize-none rounded-xl"
             data-testid="input-prompt"
           />
 
-          {/* கீழே உள்ள கன்ட்ரோல்ஸ் */}
+          {/* Bottom Controls */}
           <div className="flex items-center justify-end">
             <div className="flex items-center space-x-2 text-sm text-slate-400">
               <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-brown-500 rounded flex items-center justify-center">
@@ -634,17 +635,17 @@ export default function Generate() {
                 disabled={generateImageMutation.isPending}
                 data-testid="button-generate"
               >
-                {generateImageMutation.isPending ? "..." : "▶ உருவாக்கு"}
+                {generateImageMutation.isPending ? "..." : "▶ Generate"}
               </Button>
             </div>
           </div>
 
-          {/* டிரெண்டிங் ப்ராம்ப்ட்ஸ் */}
+          {/* Trending Prompts */}
           <div>
             <div className="flex items-center space-x-2 mb-3">
               <TrendingUp className="w-5 h-5 text-primary" />
               <h2 className="text-lg font-semibold">
-                {selectedModelData?.label} க்கான டிரெண்டிங் ப்ராம்ப்ட்ஸ்
+                Trending Prompts for {selectedModelData?.label}
               </h2>
               <span className="text-xs text-slate-400 px-2 py-1 rounded bg-slate-800">
                 {selectedModelData?.style}
@@ -660,7 +661,7 @@ export default function Generate() {
                     <p className="text-sm text-slate-300">{prompt}</p>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-xs text-slate-500">
-                        #{index + 1} டிரெண்டிங்
+                        #{index + 1} trending
                       </span>
                       <Button
                         size="sm"
@@ -668,7 +669,7 @@ export default function Generate() {
                         className="text-primary hover:text-primary/80"
                         onClick={() => handleTryPrompt(prompt)}
                       >
-                        முயற்சிக்கவும்
+                        Try it
                       </Button>
                     </div>
                   </CardContent>
