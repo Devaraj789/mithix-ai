@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, TrendingUp } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import MithixLogo from "@/components/mithix-logo";
 
 const trendingPrompts = [
   "Ancient castle floating in the clouds",
@@ -104,15 +104,15 @@ export default function Home() {
       </div>
       <div className="space-y-2">
         {trendingPrompts.map((prompt, index) => (
-          <Card 
-            key={index} 
+          <Card
+            key={index}
             className="bg-gradient-to-br from-red-600/20 to-black-600/20 border-black-500/30 hover:border-red-500/50 transition-colors">
             <CardContent className="p-0.25">
               <p className="text-sm text-slate-300">{prompt}</p>
               <div className="flex items-center justify-between mt-0.25">
                 <span className="text-xs text-slate-500">#{index + 1} trending</span>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="outline"
                   className="text-primary hover:text-primary/80"
                   onClick={() => handleTryPrompt(prompt)}

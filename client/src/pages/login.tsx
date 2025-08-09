@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { FaApple, FaGoogle, FaMicrosoft } from "react-icons/fa";
 import { Mail, Eye, EyeOff } from "lucide-react";
+import MithixLogo from "@/components/mithix-logo";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -34,9 +34,7 @@ export default function Login() {
       <Card className="w-full max-w-md glass-card border-slate-700/50 relative z-10" data-testid="login-card">
         <CardContent className="p-8">
           <div className="flex items-center justify-center mb-8">
-            <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-xl flex items-center justify-center mr-3">
-              <span className="text-white font-bold text-lg">M</span>
-            </div>
+            <MithixLogo className="w-10 h-10 mr-3" />
             <h1 className="text-2xl font-bold text-white">Mithix.AI</h1>
           </div>
 

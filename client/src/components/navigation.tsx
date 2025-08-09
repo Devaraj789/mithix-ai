@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Home, Image, Folder, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import MithixLogo from "@/components/mithix-logo";
 
 const navItems = [
   { href: "/", icon: Home, label: "Home" },
