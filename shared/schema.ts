@@ -16,12 +16,15 @@ export const generatedImages = pgTable("generated_images", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").references(() => users.id),
   prompt: text("prompt").notNull(),
+  negativePrompt: text("negative_prompt"),
   model: text("model").notNull(),
   stylePreset: text("style_preset"),
   imageUrl: text("image_url").notNull(),
   width: integer("width"),
   height: integer("height"),
   steps: integer("steps"),
+  cfgScale: integer("cfg_scale"),
+  seed: integer("seed"),
   settings: jsonb("settings"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -36,26 +39,23 @@ export const insertGeneratedImageSchema = createInsertSchema(generatedImages).om
   createdAt: true,
 });
 
-// @shared/schema/index.ts or similar
-export interface GenerateImageRequest {
-  prompt: string;
-  numImages: number;
-  steps: number;
-  height: number;
-  width: number;
-  model:
-    | "black-forest-labs/FLUX.1-schnell"
-    | "stabilityai/stable-diffusion-xl-base-1.0"
-    | "ByteDance/SDXL-Lighting"
-    | "darkstorm2150/Protogen_x3.4_Official_Release"
-    | "xinsir/controller-union-sdxl-1.0"
-    | string; // Add other model types as needed
-  cfgScale: number;
-  stylePreset?: "auto" | "dynamic" | "photorealistic" | "artistic" | "anime" | "sci-fi" | "fantasy" | "horror" | "comic" | "retro" | "minimalist" | "modern" | "vintage" | "futuristic";
-  negativePrompt?: string; // Add this line
-}
+// API request schemas
+export const generateImageRequestSchema = z.object({
+  prompt: z.string().min(1),
+  negativePrompt: z.string().optional(),
+  model: z.string(),
+  stylePreset: z.string().optional(),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+  steps: z.number().int().positive(),
+  cfgScale: z.number().positive(),
+  seed: z.number().int().optional(),
+  numImages: z.number().int().positive().default(1),
+});
 
+// Type exports
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertGeneratedImage = z.infer<typeof insertGeneratedImageSchema>;
 export type GeneratedImage = typeof generatedImages.$inferSelect;
+export type GenerateImageRequest = z.infer<typeof generateImageRequestSchema>;
