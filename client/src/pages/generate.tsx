@@ -17,8 +17,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
@@ -308,9 +306,6 @@ export default function Generate() {
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm">
-              <DialogHeader>
-                <DialogTitle>Select Style</DialogTitle>
-              </DialogHeader>
               <div className="grid grid-cols-2 gap-3">
                 {styleOptions.map((style) => (
                   <Button
@@ -339,9 +334,6 @@ export default function Generate() {
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-slate-1000 border-slate-600 max-w-sm">
-              <DialogHeader>
-                <DialogTitle>Select Preset</DialogTitle>
-              </DialogHeader>
               <div className="grid grid-cols-3 gap-3">
                 {presetOptions.map((preset) => (
                   <Button
@@ -369,9 +361,6 @@ export default function Generate() {
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Settings</DialogTitle>
-              </DialogHeader>
               <div className="space-y-4">
                 {/* Model Selection */}
                 <div className="mb-4">
