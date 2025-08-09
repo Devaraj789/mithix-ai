@@ -171,18 +171,21 @@ const presetOptions = [
 ];
 
 const aspectRatios = [
-  { value: "2:3", label: "2:3", width: 512, height: 768 },
-  { value: "4:5", label: "4:5", width: 512, height: 640 },
-  { value: "1:1", label: "1:1", width: 960, height: 960 },
-  { value: "16:9", label: "16:9", width: 1024, height: 576 },
-  { value: "9:16", label: "9:16", width: 576, height: 1024 },
+  { value: "1:1", label: "1:1", width: 1024, height: 1024 },
+  { value: "4:3", label: "4:3", width: 1024, height: 768 },
+  { value: "3:4", label: "3:4", width: 768, height: 1024 },
+  { value: "16:9", label: "16:9", width: 1152, height: 648 },
+  { value: "9:16", label: "9:16", width: 648, height: 1152 },
+  { value: "3:2", label: "3:2", width: 1152, height: 768 },
+  { value: "2:3", label: "2:3", width: 768, height: 1152 },
   { value: "custom", label: "Custom", width: 1024, height: 1024 },
 ];
 
 const imageSizes = [
-  { value: "small", label: "Small", width: 896, height: 896 },
-  { value: "medium", label: "Medium", width: 960, height: 960 },
-  { value: "large", label: "Large", width: 1024, height: 1024 },
+  { value: "small", label: "Small (512px)", width: 512, height: 512 },
+  { value: "medium", label: "Medium (768px)", width: 768, height: 768 },
+  { value: "large", label: "Large (1024px)", width: 1024, height: 1024 },
+  { value: "xl", label: "XL (1536px)", width: 1536, height: 1536 },
 ];
 
 const contrastLevels = ["Low", "Medium", "High"];
@@ -275,16 +278,22 @@ export default function Generate() {
     }
 
     const aspectRatio = aspectRatios.find(r => r.value === selectedAspectRatio);
-    const size = imageSizes.find(s => s.value === selectedSize);
 
     let width, height;
     if (selectedAspectRatio === "custom") {
       width = customWidth;
       height = customHeight;
+    } else if (aspectRatio) {
+      // Use aspect ratio dimensions directly
+      width = aspectRatio.width;
+      height = aspectRatio.height;
     } else {
-      width = aspectRatio?.width || size?.width || 1024;
-      height = aspectRatio?.height || size?.height || 1024;
+      // Fallback to 1:1 1024x1024
+      width = 1024;
+      height = 1024;
     }
+
+    console.log(`Generating image with dimensions: ${width}x${height}`);
 
     generateImageMutation.mutate({
       prompt: prompt.trim(),
@@ -483,17 +492,22 @@ export default function Generate() {
 
                 {/* Aspect Ratio */}
                 <div>
-                  <div className="flex space-x-2 mb-4">
+                  <div className="grid grid-cols-4 gap-2 mb-4">
                     {aspectRatios.map((ratio) => (
                       <Button
                         key={ratio.value}
                         variant="outline"
-                        className={`flex-1 ${selectedAspectRatio === ratio.value ? "bg-orange-600/20 border-orange-600" : "bg-slate-800/50 border-slate-600"}`}
+                        className={`flex flex-col p-2 h-auto text-xs ${selectedAspectRatio === ratio.value ? "bg-orange-600/20 border-orange-600" : "bg-slate-800/50 border-slate-600"}`}
                         onClick={() => {
                           setSelectedAspectRatio(ratio.value);
                         }}
                       >
-                        {ratio.label}
+                        <span className="font-medium">{ratio.label}</span>
+                        {ratio.value !== "custom" && (
+                          <span className="text-slate-400 text-xs mt-1">
+                            {ratio.width}×{ratio.height}
+                          </span>
+                        )}
                       </Button>
                     ))}
                   </div>
@@ -535,15 +549,15 @@ export default function Generate() {
                   )}
 
                   {/* Image Sizes */}
-                  <div className="flex space-x-2 mb-4">
+                  <div className="grid grid-cols-2 gap-2 mb-4">
                     {imageSizes.map((size) => (
                       <Button
                         key={size.value}
                         variant="outline"
-                        className={`flex-1 flex flex-col ${selectedSize === size.value ? "bg-orange-600/20 border-orange-600" : "bg-slate-800/50 border-slate-600"}`}
+                        className={`flex flex-col p-3 h-auto ${selectedSize === size.value ? "bg-orange-600/20 border-orange-600" : "bg-slate-800/50 border-slate-600"}`}
                         onClick={() => setSelectedSize(size.value)}
                       >
-                        <span className="font-medium">{size.label}</span>
+                        <span className="font-medium text-sm">{size.label}</span>
                         <span className="text-xs text-slate-400">
                           {size.width} × {size.height}
                         </span>

@@ -67,6 +67,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               height: requestData.height,
               num_inference_steps: requestData.steps,
               guidance_scale: requestData.cfgScale,
+              negative_prompt: requestData.negativePrompt,
+              seed: requestData.seed,
             },
           }),
         }
@@ -118,14 +120,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const generatedImage = await storage.createGeneratedImage({
         userId,
         prompt: requestData.prompt,
+        negativePrompt: requestData.negativePrompt,
         model: requestData.model,
         stylePreset: requestData.stylePreset,
         imageUrl,
+        width: requestData.width,
+        height: requestData.height,
+        steps: requestData.steps,
+        cfgScale: requestData.cfgScale,
+        seed: requestData.seed,
         settings: {
           width: requestData.width,
           height: requestData.height,
           steps: requestData.steps,
           cfgScale: requestData.cfgScale,
+          negativePrompt: requestData.negativePrompt,
+          seed: requestData.seed,
         },
       });
 
