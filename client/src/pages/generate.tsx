@@ -36,6 +36,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { GenerateImageRequest } from "@shared/schema";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 // API-supported models only
 const modelOptions = [
@@ -55,7 +56,7 @@ const modelOptions = [
     style: "Grand Scenes",
     color: "from-blue-600/20 to-teal-600/20"
   },
-  
+
 ];
 
 // Model-specific trending prompts
@@ -67,7 +68,7 @@ const modelTrendingPrompts: Record<string, string[]> = {
     "Underwater palace with coral reefs and sea creatures, fantasy art",
     "Steampunk airship above Victorian London, intricate gears, golden hour"
   ],
-  
+
   "black-forest-labs/FLUX.1-schnell": [
     "Abstract fluid art with vibrant colors, motion blur, dynamic composition",
     "Surreal landscape with floating islands and waterfalls, dreamlike",

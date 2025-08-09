@@ -4,6 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import type { GeneratedImage } from "@shared/schema";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface ImageCardProps {
   image: GeneratedImage;
@@ -69,12 +76,29 @@ export default function ImageCard({ image }: ImageCardProps) {
       onMouseLeave={() => setIsHovered(false)}
       data-testid={`image-card-${image.id}`}
     >
-      <img
-        src={image.imageUrl}
-        alt={`AI generated: ${image.prompt}`}
-        className="w-full h-64 object-cover"
-        data-testid={`image-${image.id}`}
-      />
+      <Dialog>
+        <DialogTrigger asChild>
+          <img
+            src={image.imageUrl}
+            alt={`AI generated: ${image.prompt}`}
+            className="w-full h-64 object-cover cursor-pointer"
+            data-testid={`image-${image.id}`}
+          />
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl max-h-[90vh] p-0">
+          <VisuallyHidden>
+            <DialogTitle>Image Preview</DialogTitle>
+          </VisuallyHidden>
+          <div className="relative">
+            <img
+              src={image.imageUrl}
+              alt={`AI generated: ${image.prompt}`}
+              className="w-full h-auto max-h-[85vh] object-cover"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+
 
       <div
         className={`absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent transition-opacity duration-300 ${
