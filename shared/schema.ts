@@ -36,40 +36,26 @@ export const insertGeneratedImageSchema = createInsertSchema(generatedImages).om
   createdAt: true,
 });
 
-export const generateImageRequestSchema = z.object({
-  prompt: z.string().min(1, "Prompt is required").max(1000, "Prompt too long"),
-  model: z.enum([
-    "black-forest-labs/FLUX.1-schnell",
-    "stabilityai/stable-diffusion-xl-base-1.0",
-    "runwayml/stable-diffusion-v1-5",
-    "stabilityai/stable-diffusion-xl-refiner-1.0",
-    "CompVis/stable-diffusion-v1-4",
-    "stabilityai/stable-diffusion-2-1",
-    "stabilityai/sdxl-turbo",
-    "ByteDance/SDXL-Lightning",
-    "prompthero/openjourney-v4",
-    "wavymulder/Analog-Diffusion",
-    "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
-    "ByteDance/AnimateDiff-Lightning",
-    "xinsir/controlnet-union-sdxl-1.0",
-    "darkstorm2150/Protogen_x3.4_Official_Release",
-    "John6666/limitless-vision-xl-v30-sdxl",
-    "openart-custom/AlbedoBase"
-  ]),
-  stylePreset: z.enum([
-    "auto", "dynamic", "photorealistic", "artistic", "anime", "sci-fi", 
-    "fantasy", "horror", "comic", "retro", "minmalist", "modern", 
-    "vintage", "futuristic"
-  ]).optional(),
-  width: z.number().min(256).max(2048).default(512),
-  height: z.number().min(256).max(2048).default(512),
-  steps: z.number().min(1).max(50).default(4),
-  cfgScale: z.number().min(1).max(20).default(1),
-  numImages: z.number().min(1).max(4).default(1),
-});
+// @shared/schema/index.ts or similar
+export interface GenerateImageRequest {
+  prompt: string;
+  numImages: number;
+  steps: number;
+  height: number;
+  width: number;
+  model:
+    | "black-forest-labs/FLUX.1-schnell"
+    | "stabilityai/stable-diffusion-xl-base-1.0"
+    | "ByteDance/SDXL-Lighting"
+    | "darkstorm2150/Protogen_x3.4_Official_Release"
+    | "xinsir/controller-union-sdxl-1.0"
+    | string; // Add other model types as needed
+  cfgScale: number;
+  stylePreset?: "auto" | "dynamic" | "photorealistic" | "artistic" | "anime" | "sci-fi" | "fantasy" | "horror" | "comic" | "retro" | "minimalist" | "modern" | "vintage" | "futuristic";
+  negativePrompt?: string; // Add this line
+}
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertGeneratedImage = z.infer<typeof insertGeneratedImageSchema>;
 export type GeneratedImage = typeof generatedImages.$inferSelect;
-export type GenerateImageRequest = z.infer<typeof generateImageRequestSchema>;
