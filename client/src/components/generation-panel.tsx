@@ -11,16 +11,86 @@ import { apiRequest } from "@/lib/queryClient";
 import type { GenerateImageRequest } from "@shared/schema";
 
 const modelOptions = [
-  { value: "black-forest-labs/FLUX.1-schnell", label: "FLUX.1 Schnell", online: true, credits: 2 },
-  { value: "stabilityai/stable-diffusion-xl-base-1.0", label: "SDXL Base 1.0", online: true, credits: 5 },
-  { value: "stabilityai/stable-diffusion-xl-refiner-1.0", label: "SDXL Refiner 1.0", online: false, credits: 5 },
-  { value: "diffusers/stable-diffusion-xl-1.0-inpainting-0.1", label: "SDXL Inpainting", online: false, credits: 5 },
-  { value: "ByteDance/SDXL-Lightning", label: "SDXL Lightning", online: true, credits: 3 },
-  { value: "ByteDance/AnimateDiff-Lightning", label: "AnimateDiff Lightning", online: false, credits: 4 },
-  { value: "xinsir/controlnet-union-sdxl-1.0", label: "ControlNet Union SDXL", online: false, credits: 6 },
-  { value: "darkstorm2150/Protogen_x3.4_Official_Release", label: "Protogen x3.4", online: false, credits: 4 },
-  { value: "John6666/limitless-vision-xl-v30-sdxl", label: "Limitless Vision XL", online: true, credits: 5 },
-  { value: "openart-custom/AlbedoBase", label: "AlbedoBase", online: false, credits: 4 },
+  {
+    value: "black-forest-labs/FLUX.1-schnell",
+    label: "FLUX.1 Schnell",
+    online: true,
+    credits: 2,
+    style: "Ultra-Fast",
+    color: "from-blue-600/20 to-purple-600/20"
+  },
+  {
+    value: "stabilityai/stable-diffusion-xl-base-1.0",
+    label: "SDXL Base",
+    online: true,
+    credits: 5,
+    style: "High Quality",
+    color: "from-green-600/20 to-teal-600/20"
+  },
+  {
+    value: "stabilityai/stable-diffusion-xl-refiner-1.0",
+    label: "SDXL Refiner",
+    online: true,
+    credits: 5,
+    style: "Detail Enhancement",
+    color: "from-purple-600/20 to-pink-600/20"
+  },
+  {
+    value: "ByteDance/SDXL-Lightning",
+    label: "SDXL Lightning",
+    online: true,
+    credits: 3,
+    style: "Fast Animation",
+    color: "from-yellow-600/20 to-orange-600/20"
+  },
+  {
+    value: "guoyww/animatediff-motion-adapter-sdxl-beta",
+    label: "AnimateDiff SDXL",
+    online: true,
+    credits: 4,
+    style: "Motion Graphics",
+    color: "from-red-600/20 to-pink-600/20"
+  },
+  {
+    value: "xinsir/controlnet-union-sdxl-1.0",
+    label: "ControlNet Union",
+    online: true,
+    credits: 4,
+    style: "Precise Control",
+    color: "from-indigo-600/20 to-blue-600/20"
+  },
+  {
+    value: "runwayml/stable-diffusion-v1-5",
+    label: "Stable Diffusion v1.5",
+    online: true,
+    credits: 3,
+    style: "Classic Quality",
+    color: "from-cyan-600/20 to-blue-600/20"
+  },
+  {
+    value: "CompVis/stable-diffusion-v1-4",
+    label: "Stable Diffusion v1.4",
+    online: true,
+    credits: 3,
+    style: "Reliable",
+    color: "from-orange-600/20 to-red-600/20"
+  },
+  {
+    value: "prompthero/openjourney-v4",
+    label: "OpenJourney v4",
+    online: true,
+    credits: 4,
+    style: "Artistic Style",
+    color: "from-violet-600/20 to-purple-600/20"
+  },
+  {
+    value: "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
+    label: "SDXL Inpainting",
+    online: true,
+    credits: 5,
+    style: "Image Editing",
+    color: "from-emerald-600/20 to-green-600/20"
+  }
 ];
 
 const stylePresets = [
