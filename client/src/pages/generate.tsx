@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, TrendingUp } from "lucide-react";
@@ -38,80 +37,96 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { GenerateImageRequest } from "@shared/schema";
 
+// API-ஆல் ஆதரிக்கப்படும் மாடல்கள் மட்டும்
 const modelOptions = [
   {
     value: "black-forest-labs/FLUX.1-schnell",
     label: "FLUX.1 Schnell",
     online: true,
     credits: 2,
+    style: "ஃப்ளூயிட் & அப்ஸ்ட்ராக்ட்",
+    color: "from-purple-600/20 to-indigo-600/20"
   },
   {
     value: "stabilityai/stable-diffusion-xl-base-1.0",
     label: "SDXL 1.0",
     online: true,
     credits: 5,
+    style: "பிரமாண்டமான காட்சிகள்",
+    color: "from-blue-600/20 to-teal-600/20"
   },
   {
-    value: "runwayml/stable-diffusion-v1-5",
-    label: "Stable Diffusion 1.5",
-    online: true,
-    credits: 3,
-  },
-  { 
-    value: "stabilityai/stable-diffusion-xl-refiner-1.0", 
-    label: "SDXL Refiner 1.0", 
-    online: true, 
-    credits: 5 
-  },
-  {
-    value: "CompVis/stable-diffusion-v1-4",
-    label: "Stable Diffusion 1.4",
-    online: true,
-    credits: 3,
-  },
-  {
-    value: "stabilityai/stable-diffusion-2-1",
-    label: "Stable Diffusion 2.1",
-    online: true,
-    credits: 4,
-  },
-  {
-    value: "stabilityai/sdxl-turbo",
-    label: "SDXL Turbo",
-    online: true,
-    credits: 2,
-  },
-  {
-    value: "ByteDance/SDXL-Lightning",
+    value: "ByteDance/SDXL-Lighting",
     label: "SDXL Lightning",
     online: true,
     credits: 3,
+    style: "வேகமான அனிமேஷன்",
+    color: "from-yellow-600/20 to-orange-600/20"
   },
   {
-    value: "prompthero/openjourney-v4",
-    label: "OpenJourney v4",
+    value: "darkstorm2150/Protogen_x3.4_Official_Release",
+    label: "Protogen x3.4",
     online: true,
-    credits: 3,
+    credits: 4,
+    style: "சை-ஃபை & ரோபோட்கள்",
+    color: "from-green-600/20 to-emerald-600/20"
   },
   {
-    value: "wavymulder/Analog-Diffusion",
-    label: "Analog Diffusion",
+    value: "xinsir/controller-union-sdxl-1.0",
+    label: "Controller Union SDXL",
     online: true,
     credits: 3,
+    style: "கேம் டிசைன் & கன்செப்ட்",
+    color: "from-red-600/20 to-pink-600/20"
   },
 ];
 
-const trendingPrompts = [
-  "Cyberpunk cityscape at night with neon lights",
-  "Majestic dragon flying over mountains",
-  "Astronaut exploring alien planet",
-  "Vintage car in abandoned city",
-  "Magic forest with glowing mushrooms",
-  "Ancient castle floating in the clouds",
-  "Phoenix rising from crystal flames",
-  "Underwater city with bioluminescent creatures",
-  "Time portal opening in a library",
-  "Steampunk airship above Victorian London",
+// மாடல்-குறிப்பிட்ட டிரெண்டிங் ப்ராம்ப்ட்கள்
+const modelTrendingPrompts: Record<string, string[]> = {
+  "stabilityai/stable-diffusion-xl-base-1.0": [
+    "பனிமலைகளுக்கு மேலே பறக்கும் பிரமாண்டமான டிராகன், அல்ட்ரா HD, விரிவான செதில்கள், எபிக் லைட்டிங்",
+    "பறக்கும் கார்கள் மற்றும் நியான் விளக்குகளுடன் கூடிய பியூச்சரிஸ்டிக் நகரக் காட்சி, சைபர்பங்க் ஸ்டைல்",
+    "ஒடிக்கும் ஆடைகளுடன் கூடிய பண்டைய கிரேக்க தேவதை, ஃபோட்டோரியலிஸ்டிக், சினிமாடிக் லைட்டிங்",
+    "பவழப்பாறைகள் மற்றும் கடல் உயிரினங்களுடன் கூடிய நீருக்கடியில் அரண்மனை, ஃபேண்டசி ஆர்ட்",
+    "விக்டோரியன் லண்டனுக்கு மேலே ஸ்டீம்பங்க் ஏர்க்கப்பல், சிக்கலான கியர்கள், தங்க நேரம்"
+  ],
+  "ByteDance/SDXL-Lighting": [
+    "பளபளப்பான வாளுடன் கூடிய அனிமே வாரியர், டைனமிக் போஸ், ஸ்பீட் லைன்கள், தெளிவான நிறங்கள்",
+    "இரவில் சைபர்பங்க் தெரு உணவு சந்தை, வேகமான மோஷன் பிளர், நியான் அடையாளங்கள்",
+    "சூப்பர்ஹீரோ இறங்கும் தாக்கக் காட்சி, ஷாக்வேவ் விளைவு, காமிக் புத்தக ஸ்டைல்",
+    "பியூச்சரிஸ்டிக் பாதையில் பந்தய கார், மோஷன் பிளர், அதிவேக நடவடிக்கை",
+    "மந்திரப் பெண் மாற்றத் தொடர், பளபளப்பான துகள்கள், அனிமே ஸ்டைல்"
+  ],
+  "darkstorm2150/Protogen_x3.4_Official_Release": [
+    "விரிவான கவசம், பளபளக்கும் கண்கள், பிந்தைய அபோகாலிப்டிக் பாழடைந்த பூமி ஆகியவற்றுடன் கூடிய சை-ஃபை ரோபோட்",
+    "விசித்திரமான தாவரங்கள் மற்றும் விலங்குகளுடன் கூடிய அன்னிய கிரகம், ஹைப்பரியலிஸ்டிக், 8k ரெசல்யூஷன்",
+    "நியான்-விளக்கும் மழையில் சைபோர்க் சாமுராய், சினிமாடிக், பிளேடு ரன்னர் ஸ்டைல்",
+    "பாழடைந்த நகரத்தில் பியூச்சரிஸ்டிக் போர் மெக், வியத்தகு ஒளி, போர்",
+    "நட்சத்திரக் கப்பல்கள் மற்றும் நெபுலாவுடன் கூடிய ஸ்பேஸ் ஓபரா காட்சி, எபிக் ஸ்கேல், டிஜிட்டல் ஆர்ட்"
+  ],
+  "black-forest-labs/FLUX.1-schnell": [
+    "தெளிவான நிறங்களுடன் கூடிய அப்ஸ்ட்ராக்ட் ஃப்ளூயிட் ஆர்ட், மோஷன் பிளர், டைனமிக் காம்போசிஷன்",
+    "மிதக்கும் தீவுகள் மற்றும் அருவிகளுடன் கூடிய சர்ரியல் இயற்கைக்காட்சி, கனவு போன்றது",
+    "பளபளக்கும் விளிம்புகளுடன் கூடிய ஜியோமெட்ரிக் வடிவங்கள், ஆப்டிகல் இல்லூஷன், நவீன கலை",
+    "பாலைவன இயற்கைக்காட்சியில் உருகும் கடிகாரம், சால்வடோர் டாலி ஸ்டைல், சர்ரியலிசம்",
+    "பளபளக்கும் தாவரங்களுடன் கூடிய சைக்கடெலிக் காளான் காடு, ஃபேண்டசி விளக்கம்"
+  ],
+  "xinsir/controller-union-sdxl-1.0": [
+    "கேம் கேரக்டர் கன்செப்ட் ஆர்ட், ஃபேண்டசி RPG, கவசம் மற்றும் ஆயுதங்களின் வடிவமைப்பு",
+    "பொறிகளும் புதையலும் கொண்ட ஐசோமெட்ரிக் டஞ்சன் காட்சி, பிக்சல் ஆர்ட் ஸ்டைல்",
+    "சைபர்நெட்டிகலி மேம்படுத்தப்பட்ட விலங்கு துணைகள், கேரக்டர் டிசைன் ஷீட்",
+    "பியூச்சரிஸ்டிக் ஸ்பேஸ்கிராஃப்ட் கன்ட்ரோல்களுக்கான UI இன்டர்ஃபேஸ், HUD எலிமெண்ட்ஸ்",
+    "பிளாட்ஃபார்மர் கேமிற்கான லெவல் டிசைன், வண்ணமயமான மேடைகள் மற்றும் தடைகள்"
+  ]
+};
+
+// டிஃபால்ட் டிரெண்டிங் ப்ராம்ப்ட்கள்
+const defaultTrendingPrompts = [
+  "நியான் விளக்குகளுடன் இரவில் சைபர்பங்க் நகரக் காட்சி",
+  "பனிமலைகளுக்கு மேலே பறக்கும் பிரமாண்டமான டிராகன்",
+  "அன்னிய கிரகத்தை ஆராயும் விண்வெளி வீரர்",
+  "கைவிடப்பட்ட நகரத்தில் விண்டேஜ் கார்",
+  "பளபளக்கும் காளான்களுடன் மந்திர காடு"
 ];
 
 const styleOptions = [
@@ -125,7 +140,7 @@ const styleOptions = [
   { value: "horror", label: "Horror" },
   { value: "comic", label: "Comic" },
   { value: "retro", label: "Retro" },
-  { value: "minmalist", label: "Minimalist" },
+  { value: "minimalist", label: "Minimalist" },
   { value: "modern", label: "Modern" },
   { value: "vintage", label: "Vintage" },
   { value: "futuristic", label: "Futuristic" },
@@ -174,7 +189,7 @@ const contrastLevels = ["Low", "Medium", "High"];
 export default function Generate() {
   const [location] = useLocation();
   const [prompt, setPrompt] = useState("");
-  
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlPrompt = urlParams.get("prompt");
@@ -183,7 +198,11 @@ export default function Generate() {
     }
   }, [location]);
 
-  const [selectedModel, setSelectedModel] = useState("black-forest-labs/FLUX.1-schnell");
+  // டிஃபால்ட் மாடலை ஆதரிக்கப்படுவதாக மாற்றுதல்
+  const [selectedModel, setSelectedModel] = useState(
+    "stabilityai/stable-diffusion-xl-base-1.0"
+  );
+
   const [selectedStyle, setSelectedStyle] = useState("auto");
   const [selectedPreset, setSelectedPreset] = useState("auto");
   const [selectedContrast, setSelectedContrast] = useState("Medium");
@@ -201,10 +220,15 @@ export default function Generate() {
   const [showImageGuidance, setShowImageGuidance] = useState(false);
   const [hasStyleReference, setHasStyleReference] = useState(false);
   const [styleReferenceImages, setStyleReferenceImages] = useState<string[]>([]);
-  
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // தற்போதைய மாடலுக்கான டிரெண்டிங் ப்ராம்ப்ட்கள்
+  const selectedModelData = modelOptions.find(model => model.value === selectedModel);
+  const currentTrendingPrompts = modelTrendingPrompts[selectedModel] || defaultTrendingPrompts;
+
+  // ஜெனரேட் மியூடேஷன்
   const generateImageMutation = useMutation({
     mutationFn: async (data: GenerateImageRequest) => {
       const response = await apiRequest("POST", "/api/generate-image", {
@@ -215,8 +239,8 @@ export default function Generate() {
     },
     onSuccess: () => {
       toast({
-        title: "Image Generated!",
-        description: "Your image has been created successfully.",
+        title: "படம் உருவாக்கப்பட்டது!",
+        description: "உங்கள் படம் வெற்றிகரமாக உருவாக்கப்பட்டது.",
       });
       queryClient.invalidateQueries({
         queryKey: ["/api/user/default-user/images"],
@@ -224,29 +248,25 @@ export default function Generate() {
     },
     onError: (error: any) => {
       toast({
-        title: "Generation Failed",
-        description: error.message || "Failed to generate image",
+        title: "உருவாக்கம் தோல்வியடைந்தது",
+        description: error.message || "படத்தை உருவாக்க முடியவில்லை",
         variant: "destructive",
       });
     },
   });
 
-  const selectedModelData = modelOptions.find((model) => model.value === selectedModel);
-  const selectedSizeData = imageSizes.find((size) => size.value === selectedSize);
+  const selectedSizeData = imageSizes.find(size => size.value === selectedSize);
 
   const handleGenerate = () => {
     if (!prompt.trim()) {
       toast({
-        title: "Missing Prompt",
-        description: "Please enter a description for your image.",
+        title: "ப்ராம்ப்ட் காணவில்லை",
+        description: "உங்கள் படத்திற்கான விளக்கத்தை உள்ளிடவும்.",
         variant: "destructive",
       });
       return;
     }
 
-    console.log("Generating with size:", selectedSizeData);
-    console.log("Generating with size:", selectedSizeData?.width, selectedSizeData?.height);
-    
     const width = selectedSizeData?.width || 576;
     const height = selectedSizeData?.height || 1024;
 
@@ -268,10 +288,10 @@ export default function Generate() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
-      {/* Header */}
+      {/* ஹெடர் */}
       <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
         <div className="flex items-center">
-          <h1 className="text-xl font-semibold mr-2">Image Gen</h1>
+          <h1 className="text-xl font-semibold mr-2">AI பட உருவாக்கி</h1>
           <ChevronDown className="w-5 h-5 text-slate-400" />
         </div>
         <div className="flex items-center space-x-4">
@@ -288,9 +308,9 @@ export default function Generate() {
       </div>
 
       <div className="p-4 space-y-4">
-        {/* Style and Settings Selection */}
+        {/* ஸ்டைல் மற்றும் செட்டிங்ஸ் */}
         <div className="flex space-x-3 mb-4">
-          {/* Style Selection */}
+          {/* ஸ்டைல் தேர்வு */}
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -299,12 +319,12 @@ export default function Generate() {
                 data-testid="button-styles"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Styles</span>
+                <span>ஸ்டைல்கள்</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm">
               <DialogHeader>
-                <DialogTitle>Select Style</DialogTitle>
+                <DialogTitle>ஸ்டைலைத் தேர்ந்தெடுக்கவும்</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-2 gap-3">
                 {styleOptions.map((style) => (
@@ -321,7 +341,7 @@ export default function Generate() {
             </DialogContent>
           </Dialog>
 
-          {/* Preset Selection */}
+          {/* பிரீசெட் தேர்வு */}
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -330,12 +350,12 @@ export default function Generate() {
                 data-testid="button-preset"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Preset</span>
+                <span>பிரீசெட்</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm">
+            <DialogContent className="bg-slate-1000 border-slate-600 max-w-sm">
               <DialogHeader>
-                <DialogTitle>Select Preset</DialogTitle>
+                <DialogTitle>பிரீசெட்டைத் தேர்ந்தெடுக்கவும்</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-3 gap-3">
                 {presetOptions.map((preset) => (
@@ -352,7 +372,7 @@ export default function Generate() {
             </DialogContent>
           </Dialog>
 
-          {/* Settings Icon */}
+          {/* செட்டிங்ஸ் */}
           <Dialog open={showSettings} onOpenChange={setShowSettings}>
             <DialogTrigger asChild>
               <Button
@@ -365,18 +385,69 @@ export default function Generate() {
             </DialogTrigger>
             <DialogContent className="bg-slate-1000 border-slate-700 max-w-sm max-h-[80vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Settings</DialogTitle>
+                <DialogTitle>செட்டிங்ஸ்</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
-                {/* Contrast */}
+                {/* மாடல் தேர்வு */}
+                <div className="mb-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <span className="text-sm font-medium">மாடல்கள்</span>
+                  </div>
+                  <Select
+                    value={selectedModel}
+                    onValueChange={setSelectedModel}
+                  >
+                    <SelectTrigger className="bg-slate-800/50 border-slate-600">
+                      <div className="flex items-center justify-between w-full">
+                        <SelectValue />
+                        {selectedModelData && (
+                          <div className="flex items-center space-x-2">
+                            <div
+                              className={`w-2 h-2 rounded-full ${selectedModelData.online ? "bg-green-400" : "bg-red-400"}`}
+                            ></div>
+                            <span className="text-xs text-slate-400">
+                              {selectedModelData.credits} கிரெடிட்ஸ்
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-800 border-slate-600">
+                      {modelOptions.map((model) => (
+                        <SelectItem key={model.value} value={model.value}>
+                          <div className="flex items-center justify-between w-full">
+                            <span>{model.label}</span>
+                            <div className="flex items-center space-x-2 ml-4">
+                              <div
+                                className={`w-2 h-2 rounded-full ${model.online ? "bg-green-400" : "bg-red-400"}`}
+                              ></div>
+                              <span
+                                className={`text-xs ${model.online ? "text-green-400" : "text-red-400"}`}
+                              >
+                                {model.online ? "ஆன்லைன்" : "ஆஃப்லைன்"}
+                              </span>
+                              <span className="text-xs text-slate-400">
+                                {model.credits} கிரெடிட்ஸ்
+                              </span>
+                            </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* காண்ட்ராஸ்ட் */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2">
                       <Settings className="w-5 h-5" />
-                      <span className="font-medium">Contrast</span>
+                      <span className="font-medium">காண்ட்ராஸ்ட்</span>
                       <ChevronDown className="w-4 h-4" />
                     </div>
-                    <span className="text-sm text-slate-400">{selectedContrast}</span>
+                    <span className="text-sm text-slate-400">
+                      {selectedContrast}
+                    </span>
                   </div>
                   <div className="space-y-2">
                     {contrastLevels.map((level) => (
@@ -392,7 +463,7 @@ export default function Generate() {
                   </div>
                 </div>
 
-                {/* Aspect Ratio */}
+                {/* அஸ்பெக்ட் ரேஷியோ */}
                 <div>
                   <div className="flex space-x-2 mb-4">
                     {aspectRatios.map((ratio) => (
@@ -400,14 +471,20 @@ export default function Generate() {
                         key={ratio.value}
                         variant="outline"
                         className={`flex-1 ${selectedAspectRatio === ratio.value ? "bg-orange-600/20 border-orange-600" : "bg-slate-800/50 border-slate-600"}`}
-                        onClick={() => setSelectedAspectRatio(ratio.value)}
+                        onClick={() => {
+                          if (ratio.value === "more") {
+                            window.location.href = "/dimensions";
+                          } else {
+                            setSelectedAspectRatio(ratio.value);
+                          }
+                        }}
                       >
                         {ratio.label}
                       </Button>
                     ))}
                   </div>
 
-                  {/* Image Sizes */}
+                  {/* பட அளவுகள் */}
                   <div className="flex space-x-2 mb-4">
                     {imageSizes.map((size) => (
                       <Button
@@ -425,10 +502,10 @@ export default function Generate() {
                   </div>
                 </div>
 
-                {/* Number of Images */}
+                {/* படங்களின் எண்ணிக்கை */}
                 <div>
                   <div className="flex items-center space-x-2 mb-3">
-                    <span className="font-medium">Number of Images</span>
+                    <span className="font-medium">படங்களின் எண்ணிக்கை</span>
                     <Button variant="ghost" size="icon" className="w-4 h-4">
                       <span className="text-xs">?</span>
                     </Button>
@@ -450,10 +527,10 @@ export default function Generate() {
                   </div>
                 </div>
 
-                {/* Private Mode */}
+                {/* பிரைவேட் மோட் */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <span className="font-medium">Private Mode</span>
+                    <span className="font-medium">பிரைவேட் மோட்</span>
                     <Button variant="ghost" size="icon" className="w-4 h-4">
                       <span className="text-xs">?</span>
                     </Button>
@@ -471,72 +548,29 @@ export default function Generate() {
                   </div>
                 </div>
                 <div className="text-xs text-slate-400 -mt-2">
-                  Available for paid users only
+                  பணம் செலுத்தும் பயனர்களுக்கு மட்டுமே கிடைக்கும்
                 </div>
 
-                {/* Advanced Settings */}
+                {/* மேம்பட்ட செட்டிங்ஸ் */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="font-medium">Advanced Settings</span>
+                    <span className="font-medium">மேம்பட்ட செட்டிங்ஸ்</span>
                   </div>
 
-                  {/* Model Selection */}
-                  <div className="mb-4">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-sm font-medium">Models</span>
-                    </div>
-                    <Select value={selectedModel} onValueChange={setSelectedModel}>
-                      <SelectTrigger className="bg-slate-800/50 border-slate-600">
-                        <div className="flex items-center justify-between w-full">
-                          <SelectValue />
-                          {selectedModelData && (
-                            <div className="flex items-center space-x-2">
-                              <div
-                                className={`w-2 h-2 rounded-full ${selectedModelData.online ? "bg-green-400" : "bg-red-400"}`}
-                              ></div>
-                              <span className="text-xs text-slate-400">
-                                {selectedModelData.credits} credits
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-600">
-                        {modelOptions.map((model) => (
-                          <SelectItem key={model.value} value={model.value}>
-                            <div className="flex items-center justify-between w-full">
-                              <span>{model.label}</span>
-                              <div className="flex items-center space-x-2 ml-4">
-                                <div
-                                  className={`w-2 h-2 rounded-full ${model.online ? "bg-green-400" : "bg-red-400"}`}
-                                ></div>
-                                <span
-                                  className={`text-xs ${model.online ? "text-green-400" : "text-red-400"}`}
-                                >
-                                  {model.online ? "Online" : "Offline"}
-                                </span>
-                                <span className="text-xs text-slate-400">
-                                  {model.credits} credits
-                                </span>
-                              </div>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Toggle Options */}
+                  {/* டோகிள் ஆப்ஷன்ஸ் */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <Settings className="w-4 h-4" />
-                        <span>PhotoReal</span>
+                        <span>ஃபோட்டோ ரியல்</span>
                         <Button variant="ghost" size="icon" className="w-4 h-4">
                           <span className="text-xs">?</span>
                         </Button>
                       </div>
                       <div className="flex items-center space-x-2">
+                        <div className="">
+                          <span className="text-xs"></span>
+                        </div>
                         <Switch
                           checked={photoReal}
                           onCheckedChange={setPhotoReal}
@@ -546,7 +580,7 @@ export default function Generate() {
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <span>Negative Prompt</span>
+                        <span>நெகடிவ் ப்ராம்ப்ட்</span>
                         <Button variant="ghost" size="icon" className="w-4 h-4">
                           <span className="text-xs">?</span>
                         </Button>
@@ -559,16 +593,16 @@ export default function Generate() {
                   </div>
                 </div>
 
-                {/* Generate Button */}
+                {/* ஜெனரேட் பட்டன் */}
                 <div className="pt-4 border-t border-slate-700">
-                  <div className="flex items-center justify-center space-x-2 text-sm text-slate-400 mb-4">
+                  <div className="flex items-center justify- space-x-2 text-sm text-slate-400 mb-4">
                     <div className="w-5 h-5 bg-gradient-to-r from-orange-500 to-brown-500 rounded flex items-center justify-center">
                       <span className="text-xs">⚡</span>
                     </div>
-                    <span>15 to Generate</span>
+                    <span>ஜெனரேட் செய்ய 15</span>
                   </div>
                   <Button className="w-full bg-slate-800/50 border border-slate-600 text-white hover:bg-slate-700/50">
-                    Reset to defaults
+                    டிஃபால்ட்களுக்கு மீட்டமைக்கவும்
                   </Button>
                 </div>
               </div>
@@ -576,17 +610,17 @@ export default function Generate() {
           </Dialog>
         </div>
 
-        {/* Prompt Input */}
+        {/* ப்ராம்ப்ட் இன்புட் */}
         <div className="space-y-3">
           <Textarea
-            placeholder="Describe your image... or Enter your prompts..."
+            placeholder="உங்கள் படத்தை விவரிக்கவும்... அல்லது உங்கள் ப்ராம்ப்ட்களை உள்ளிடவும்..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="min-h-20 bg-slate-800/50 border-slate-600 text-white placeholder-slate-500 focus:border-primary focus:ring-primary/20 resize-none rounded-xl"
             data-testid="input-prompt"
           />
 
-          {/* Below prompt controls */}
+          {/* கீழே உள்ள கன்ட்ரோல்ஸ் */}
           <div className="flex items-center justify-end">
             <div className="flex items-center space-x-2 text-sm text-slate-400">
               <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-brown-500 rounded flex items-center justify-center">
@@ -600,28 +634,33 @@ export default function Generate() {
                 disabled={generateImageMutation.isPending}
                 data-testid="button-generate"
               >
-                {generateImageMutation.isPending ? "..." : "▶ Generate"}
+                {generateImageMutation.isPending ? "..." : "▶ உருவாக்கு"}
               </Button>
             </div>
           </div>
 
-          {/* Trending Prompts */}
+          {/* டிரெண்டிங் ப்ராம்ப்ட்ஸ் */}
           <div>
             <div className="flex items-center space-x-2 mb-3">
               <TrendingUp className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold">Trending Prompts</h2>
+              <h2 className="text-lg font-semibold">
+                {selectedModelData?.label} க்கான டிரெண்டிங் ப்ராம்ப்ட்ஸ்
+              </h2>
+              <span className="text-xs text-slate-400 px-2 py-1 rounded bg-slate-800">
+                {selectedModelData?.style}
+              </span>
             </div>
             <div className="space-y-2">
-              {trendingPrompts.map((prompt, index) => (
+              {currentTrendingPrompts.map((prompt, index) => (
                 <Card
                   key={index}
-                  className="bg-gradient-to-br from-red-600/20 to-black-600/20 border-black-500/30 hover:border-red-500/50 transition-colors"
+                  className={`bg-gradient-to-br ${selectedModelData?.color} border-slate-600/30 hover:border-slate-500/50 transition-colors`}
                 >
-                  <CardContent className="p-3">
+                  <CardContent className="p-4">
                     <p className="text-sm text-slate-300">{prompt}</p>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-xs text-slate-500">
-                        #{index + 1} trending
+                        #{index + 1} டிரெண்டிங்
                       </span>
                       <Button
                         size="sm"
@@ -629,7 +668,7 @@ export default function Generate() {
                         className="text-primary hover:text-primary/80"
                         onClick={() => handleTryPrompt(prompt)}
                       >
-                        Try it
+                        முயற்சிக்கவும்
                       </Button>
                     </div>
                   </CardContent>
