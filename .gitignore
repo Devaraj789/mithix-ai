@@ -1,6 +1,37 @@
-node_modules
-dist
+# Node.js & Next.js Specific
+node_modules/
+.next/
+dist/
+build/
+out/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs and cache
+*.log
+.cache
+.parcel-cache
+.vscode/
+
+# System files
 .DS_Store
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# Hugging Face cache
+.huggingface/
+model_cache/
+
+# Additional entries from the existing file
 server/public
 vite.config.ts.*
 *.tar.gz
