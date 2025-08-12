@@ -21,7 +21,7 @@ out/
 
 # Coverage reports
 coverage/
-.nyc_output
+.nyc_output/
 
 # Lock files
 package-lock.json
@@ -30,3 +30,8 @@ yarn.lock
 # Hugging Face cache
 .huggingface/
 model_cache/
+
+# Additional entries from the existing file
+server/public
+vite.config.ts.*
+*.tar.gz
